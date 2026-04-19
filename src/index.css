@@ -110,10 +110,26 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.radix-themes {
+  --cursor-button: pointer;
+  --cursor-checkbox: pointer;
+  --cursor-link: pointer;
+  --cursor-menu-item: pointer;
+  --cursor-radio: pointer;
+  --cursor-slider-thumb: grab;
+  --cursor-slider-thumb-active: grabbing;
+  --cursor-switch: pointer;
+  --default-font-family: 'Manrope', sans-serif;
+  --default-letter-spacing: 0.03em;
+  /* Your custom default font */
+
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

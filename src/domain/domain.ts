@@ -107,6 +107,18 @@ export interface EventDetails {
   updatedAt: Date;
 }
 
+export interface Page {
+  size: number,
+  number: number,
+  totalElements: number,
+  totalPages: number
+}
+
+export interface PaginationResponse<T> {
+  content: T[];
+  page: Page
+}
+
 export interface SpringBootPagination<T> {
   content: T[]; // The actual data items for the current page
   pageable: {

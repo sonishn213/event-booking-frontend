@@ -11,8 +11,7 @@ import PublishedEventCard from "@/components/published-event-card";
 import { SimplePagination } from "@/components/simple-pagination";
 
 const AttendeeLandingPage: React.FC = () => {
-  const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } =
-    useAuth();
+  const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } = useAuth();
 
   const navigate = useNavigate();
 
@@ -20,6 +19,7 @@ const AttendeeLandingPage: React.FC = () => {
   const [publishedEvents, setPublishedEvents] = useState<
     SpringBootPagination<PublishedEventSummary> | undefined
   >();
+
   const [error, setError] = useState<string | undefined>();
   const [query, setQuery] = useState<string | undefined>();
 

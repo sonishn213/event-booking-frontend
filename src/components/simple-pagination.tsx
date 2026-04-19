@@ -1,42 +1,50 @@
-import { SpringBootPagination } from "@/domain/domain";
+import { Page } from "@/domain/domain";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { IconButton } from "@radix-ui/themes";
 
-interface SimplePaginationProps<T> {
-  pagination: SpringBootPagination<T>;
+interface SimplePaginationProps {
+  pagination: Page;
   onPageChange: (page: number) => void;
 }
 
-export function SimplePagination<T>({
+export function SimplePagination({
   pagination,
   onPageChange,
-}: React.FC<SimplePaginationProps<T>>) {
+}: SimplePaginationProps) {
   const currentPage = pagination.number;
   const totalPages = pagination.totalPages;
 
   return (
     <div className="flex gap-2 items-center">
-      <Button
-        size="sm"
-        className="cursor-pointer"
+       <IconButton 
+        asChild
+        size="2"
+        radius="full"
+        variant="soft"
+        
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={pagination.first}
+        disabled={currentPage == 0}
       >
-        <ChevronLeft className="h-4 w-4" />
-        <span className="sr-only">Previous Page</span>
-      </Button>
+        <button >
+          <ChevronLeft size="16" />
+        </button>
+      </IconButton>
       <div className="text-sm">
         Page {currentPage + 1} of {totalPages}
       </div>
-      <Button
-        size="sm"
-        className="cursor-pointer"
+      <IconButton 
+        asChild
+        size="2"
+        radius="full"
+        variant="soft"
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={pagination.last}
+        disabled={currentPage == (totalPages - 1)}
       >
-        <ChevronRight className="h-4 w-4" />
-        <span className="sr-only">Next Page</span>
-      </Button>
+        <button>
+          <ChevronRight size="16"/>
+        </button>
+      </IconButton>
     </div>
   );
 }

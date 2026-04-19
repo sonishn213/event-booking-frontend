@@ -11,6 +11,7 @@ import {
   TicketValidationRequest,
   TicketValidationResponse,
   UpdateEventRequest,
+  PaginationResponse
 } from "@/domain/domain";
 
 export const createEvent = async (
@@ -67,7 +68,7 @@ export const updateEvent = async (
 export const listEvents = async (
   accessToken: string,
   page: number,
-): Promise<SpringBootPagination<EventSummary>> => {
+): Promise<PaginationResponse<EventSummary>> => {
   const response = await fetch(`/api/v1/events?page=${page}&size=2`, {
     method: "GET",
     headers: {
@@ -87,7 +88,7 @@ export const listEvents = async (
     }
   }
 
-  return responseBody as SpringBootPagination<EventSummary>;
+  return responseBody as PaginationResponse<EventSummary>;
 };
 
 export const getEvent = async (

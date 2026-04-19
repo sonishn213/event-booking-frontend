@@ -1,6 +1,9 @@
 import NavBar from "@/components/nav-bar";
+import SideBar from "@/components/ui/sidebar/side-bar";
 import { SimplePagination } from "@/components/simple-pagination";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {Card,Text,Box,Flex,Button, Heading,Table,Badge,DropdownMenu,IconButton} from "@radix-ui/themes";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,36 +14,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+
+// import {
+//   Card,
+//   CardContent,
+//   CardFooter,
+//   CardHeader,
+// } from "@/components/ui/card";
+
 import {
   EventSummary,
   EventStatusEnum,
-  SpringBootPagination,
+  PaginationResponse,
 } from "@/domain/domain";
 import { deleteEvent, listEvents } from "@/lib/api";
-import {
-  AlertCircle,
-  Calendar,
-  Clock,
-  Edit,
-  MapPin,
-  Tag,
-  Trash,
-} from "lucide-react";
+import {  AlertCircle,  Calendar,  Clock,  Edit,  MapPin,  Tag,  Trash,  Plus, Ellipsis, CopyPlus} 
+from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { Link } from "react-router";
+import { AdminLayout } from "@/components/admin-layout";
 
 const DashboardListEventsPage: React.FC = () => {
   const { isLoading, user } = useAuth();
   const [events, setEvents] = useState<
-    SpringBootPagination<EventSummary> | undefined
+    PaginationResponse<EventSummary> | undefined
   >();
   const [error, setError] = useState<string | undefined>();
   const [deleteEventError, setDeleteEventError] = useState<
@@ -95,18 +95,18 @@ const DashboardListEventsPage: React.FC = () => {
     });
   };
 
-  const formatStatusBadge = (status: EventStatusEnum) => {
+  const getStatusColor = (status: EventStatusEnum) => {
     switch (status) {
       case EventStatusEnum.DRAFT:
-        return "bg-gray-700 text-gray-200";
+        return "gray";
       case EventStatusEnum.PUBLISHED:
-        return "bg-green-700 text-green-100";
+        return "grass";
       case EventStatusEnum.CANCELLED:
-        return "bg-red-700 text-red-100";
+        return "red";
       case EventStatusEnum.COMPLETED:
-        return "bg-blue-700 text-blue-100";
+        return "blue";
       default:
-        return "bg-gray-700 text-gray-200";
+        return "purple";
     }
   };
 
@@ -157,43 +157,42 @@ const DashboardListEventsPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-black min-h-screen text-white">
-      <NavBar />
+    <AdminLayout>
+      <AdminLayout.Body>
+          <Box mb="6">
+            <Flex justify="between">
+              <Heading>
+                 Your Events
+              </Heading>
+              <Link to="/dashboard/events/create" >
+                <Button variant="soft">
+                  <Plus />  Add New
+                </Button>
+              </Link>
+            </Flex>
+          </Box>
+          <Table.Root variant="surface">
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Schedule</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Sales Period</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Venue</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell align="center">Action</Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-      <div className="max-w-lg mx-auto px-4">
-        {/* Title */}
-        <div className="py-8 px-4 flex justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Your Events</h1>
-            <p>Events you have created</p>
-          </div>
-          <div>
-            <Link to="/dashboard/events/create">
-              <Button className="bg-purple-700 hover:bg-purple-500 cursor-pointer">
-                Create Event
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Event Cards */}
-        <div className="space-y-2">
-          {events?.content.map((eventItem) => (
-            <Card className="bg-gray-900 border-gray-700 text-white">
-              <CardHeader>
-                <div className="flex justify-between">
-                  <h3 className="font-bold text-xl">{eventItem.name}</h3>
-                  <span
-                    className={`flex items-center px-2 py-1 rounded-lg text-xs ${formatStatusBadge(eventItem.status)}`}
-                  >
-                    {eventItem.status}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Event Start & End */}
-                <div className="flex space-x-2">
-                  <Calendar className="h-5 w-5 text-gray-400" />
+            <Table.Body>
+              {events?.content.map((eventItem) => (
+                <Table.Row>
+                  <Table.RowHeaderCell>
+                      <div className="max-w-xs text-wrap">
+                        {eventItem.name}
+                      </div>
+                  </Table.RowHeaderCell>
+                  <Table.Cell>
+                    <div className="flex space-x-2">
                   <div>
                     <p className="font-medium">
                       {formatDate(eventItem.start)} to{" "}
@@ -205,94 +204,50 @@ const DashboardListEventsPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                {/* Sales start and end */}
-                <div className="flex space-x-2">
-                  <Clock className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <h4 className="font-medium">Sales Period</h4>
-                    <p className="text-gray-400">
-                      {formatDate(eventItem.salesStart)} to{" "}
-                      {formatDate(eventItem.salesEnd)}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <MapPin className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="font-medium">{eventItem.venue}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Tag className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <h4 className="font-medium">Ticket Types</h4>
-                    <ul>
-                      {eventItem.ticketTypes.map((ticketType) => (
-                        <li
-                          key={ticketType.id}
-                          className="flex gap-2 text-gray-400"
-                        >
-                          <span>{ticketType.name}</span>
-                          <span>${ticketType.price}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end gap-2">
-                <Link to={`/dashboard/events/update/${eventItem.id}`}>
-                  <Button
-                    type="button"
-                    className="bg-gray-700 hover:bg-gray-500 cursor-pointer"
-                  >
-                    <Edit />
-                  </Button>
-                </Link>
-                <Button
-                  type="button"
-                  className="bg-red-700/80 hover:bg-red-500 cursor-pointer"
-                  onClick={() => handleOpenDeleteEventDialog(eventItem)}
-                >
-                  <Trash />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-center py-8">
-        {events && (
-          <SimplePagination pagination={events} onPageChange={setPage} />
-        )}
-      </div>
-      <AlertDialog open={dialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will delete your event '{eventToDelete?.name}' and cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          {deleteEventError && (
-            <Alert variant="destructive" className="border-red-700">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{deleteEventError}</AlertDescription>
-            </Alert>
-          )}
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelDeleteEventDialog}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleDeleteEvent()}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+                  </Table.Cell>
+                  <Table.Cell>
+                    {formatDate(eventItem.salesStart)} to{" "}
+                    {formatDate(eventItem.salesEnd)}
+                  </Table.Cell>
+                  <Table.Cell>{eventItem.venue}</Table.Cell>
+                  <Table.Cell>
+                      <Badge color={getStatusColor(eventItem.status)}>
+                        {eventItem.status}
+                      </Badge>
+                  </Table.Cell>
+                  <Table.Cell align="center">
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger>
+                          <IconButton  variant="ghost" color="gray">
+                            <Ellipsis size="16"/>
+                          </IconButton>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content variant="soft">
+                          <DropdownMenu.Item color="gray">
+                            <Edit size="14"/>Edit
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item  color="gray">
+                            <CopyPlus size="14"/>Duplicate
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Separator />
+                          <DropdownMenu.Item  color="red">
+                            <Trash size="14"/>Delete
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+
+          <div className="flex justify-center py-8">
+            {events && (
+              <SimplePagination pagination={events.page} onPageChange={setPage} />
+            )}
+          </div>
+      </AdminLayout.Body>
+    </AdminLayout>
   );
 };
 

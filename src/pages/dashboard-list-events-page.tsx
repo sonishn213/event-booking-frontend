@@ -1,27 +1,6 @@
-import NavBar from "@/components/nav-bar";
-import SideBar from "@/components/ui/sidebar/side-bar";
 import { SimplePagination } from "@/components/simple-pagination";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {Card,Text,Box,Flex,Button, Heading,Table,Badge,DropdownMenu,IconButton} from "@radix-ui/themes";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-// import { Button } from "@/components/ui/button";
-
-// import {
-//   Card,
-//   CardContent,
-//   CardFooter,
-//   CardHeader,
-// } from "@/components/ui/card";
+import {Box,Flex,Button, Heading,Table,Badge,DropdownMenu,IconButton,AlertDialog} from "@radix-ui/themes";
 
 import {
   EventSummary,
@@ -223,14 +202,19 @@ const DashboardListEventsPage: React.FC = () => {
                           </IconButton>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content variant="soft">
+                            <Link to={`/dashboard/events/update/${eventItem.id}`}>
                           <DropdownMenu.Item color="gray">
-                            <Edit size="14"/>Edit
+                              <Edit size="14"/>Edit
                           </DropdownMenu.Item>
+                            </Link>
                           <DropdownMenu.Item  color="gray">
                             <CopyPlus size="14"/>Duplicate
                           </DropdownMenu.Item>
                           <DropdownMenu.Separator />
-                          <DropdownMenu.Item  color="red">
+                          <DropdownMenu.Item  
+                            color="red" 
+                            onClick={() => handleOpenDeleteEventDialog(eventItem)}
+                          >
                             <Trash size="14"/>Delete
                           </DropdownMenu.Item>
                         </DropdownMenu.Content>
@@ -246,8 +230,37 @@ const DashboardListEventsPage: React.FC = () => {
               <SimplePagination pagination={events.page} onPageChange={setPage} />
             )}
           </div>
+          <AlertDialog.Root open={dialogOpen}>
+        <AlertDialog.Content>
+            <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This will delete your event '{eventToDelete?.name}' and cannot be
+              undone.
+            </AlertDialog.Description>
+          {deleteEventError && (
+            <Alert variant="destructive" className="border-red-700">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{deleteEventError}</AlertDescription>
+            </Alert>
+          )} 
+          <Flex gap="3" mt="4" justify="end">
+            <AlertDialog.Cancel onClick={handleCancelDeleteEventDialog}>
+              <Button variant="soft" color="gray">
+                Cancel
+              </Button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action onClick={() => handleDeleteEvent()}>
+               <Button color="red">
+                  Continue
+               </Button>
+            </AlertDialog.Action>
+          </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
       </AdminLayout.Body>
     </AdminLayout>
+    
   );
 };
 

@@ -1,7 +1,9 @@
 import AttendeeLandingPage from "../pages/attendee-landing-page.tsx";
+import AttendeeLandingPageOLD from "../pages/attendee-landing-page-OLD.tsx"
 import { createBrowserRouter } from "react-router";
 import OrganizersLandingPage from "../pages/organizers-landing-page.tsx";
 import DashboardManageEventPage from "../pages/dashboard-manage-event-page.tsx";
+import DashboardManageEventPageOLD from "../pages/dashboard-manage-event-page-OLD.tsx";
 import LoginPage from "../pages/login-page.tsx";
 import ProtectedRoute from "../components/protected-route.tsx";
 import CallbackPage from "../pages/callback-page.tsx";
@@ -18,6 +20,10 @@ const router = createBrowserRouter([
     {
         path: "/",
         Component: AttendeeLandingPage,
+    },
+    {
+        path: "/old",
+        Component: AttendeeLandingPageOLD,
     },
     {
         path: "/callback",
@@ -41,13 +47,17 @@ const router = createBrowserRouter([
     },
     {
         path: "/organizers",
-        Component: OrganizersLandingPage,
+        element: (
+            <ProtectedRoute>
+                <OrganizersLandingPage />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/dashboard",
         element: (
             <ProtectedRoute>
-            <DashboardPage />
+                <DashboardPage />
             </ProtectedRoute>
         ),
     },
@@ -104,6 +114,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute>
             <DashboardManageEventPage />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/dashboard/events-old/update/:id",
+        element: (
+            <ProtectedRoute>
+            <DashboardManageEventPageOLD />
             </ProtectedRoute>
         ),
     },

@@ -1,35 +1,21 @@
 import * as React from "react";
+import { Link } from "react-router";
 
-import {ScrollArea,Box,Flex,Heading,IconButton,Separator} from "@radix-ui/themes";
+import {ScrollArea,Box} from "@radix-ui/themes";
 
 import { SideBarItem } from "./side-bar-item";
 
 
-import { House,CalendarFold,Bell,FerrisWheel } from "lucide-react";
+import { House,CalendarFold} from "lucide-react";
+
+
 
 const SideBar : React.FC = () => {
+
     return (
 
-    <div>
-        <header>
-            <Box pt="3" px="4">
-                <Flex gap="2" justify="between" align="center">
-                    <Flex gap="2" align="center">
-                        <FerrisWheel />
-                        <Heading>Eventz</Heading>
-                    </Flex>
-                    <div className="cursor-pointer">
-                        <IconButton variant="ghost" radius="full" color="gray">
-                            <Bell size="20" strokeWidth="2"/>
-                        </IconButton>
-                    </div>
-                </Flex>
-            </Box>
-            
-        </header>
-            <div className="px-3">
-                <Separator mt="3" mb="0" size="4" />
-            </div>
+    <div className="w-full h-full bg-white border-r-1 border-gray-300" >
+
         <ScrollArea type="hover" scrollbars="vertical">
 
             <Box maxWidth="100%" py="3" px="4">
@@ -41,17 +27,21 @@ const SideBar : React.FC = () => {
                         Dashboard
                     </SideBarItem.Label>
                 </SideBarItem>
+                <Link to="/dashboard/events">
+                    <SideBarItem active>
+                        <SideBarItem.Icon>
+                            <CalendarFold size={18} strokeWidth={1.5}/>
+                        </SideBarItem.Icon>
+                        <SideBarItem.Label>
+                            Events
+                        </SideBarItem.Label>
+                    </SideBarItem>
+                </Link>
 
-                <SideBarItem active>
-                    <SideBarItem.Icon>
-                        <CalendarFold size={18} strokeWidth={1.5}/>
-                    </SideBarItem.Icon>
-                    <SideBarItem.Label>
-                        Events
-                    </SideBarItem.Label>
-                </SideBarItem>
+                
             </Box>
         </ScrollArea>
+
     </div>
 
     );

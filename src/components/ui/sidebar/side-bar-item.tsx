@@ -24,8 +24,8 @@ const Root: FC<RootProps> = ({ children, active = false}) => (
     px="3"
     mb="2"
     className={clsx(
-      "rounded-md transition cursor-pointer select-none hover:bg-gray-200",
-      active && "bg-white shadow-sm hover:bg-white"
+      "rounded-md transition cursor-pointer select-none hover:bg-amber-100",
+        active && "text-amber-900 bg-amber-200"
     )}
 
     

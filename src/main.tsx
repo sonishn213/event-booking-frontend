@@ -16,7 +16,7 @@ const oidcConfig = {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Theme accentColor="amber" radius="large">
+    <Theme accentColor="amber" radius="large" className="h-full">
       <AuthProvider {...oidcConfig}>
         <RouterProvider router={router} />
       </AuthProvider>

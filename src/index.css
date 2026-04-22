@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "@radix-ui/themes/tokens/base.css";
+@import "@radix-ui/themes/tokens/colors/amber.css";
+
+@import "@radix-ui/themes/components.css";
+@import "@radix-ui/themes/utilities.css";
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -125,6 +132,19 @@
 
 }
 
+.rdp-root {
+  --rdp-accent-color: rgb(255, 187, 0);
+  --rdp-day-height: 32px;
+  --rdp-day-width: 32px;
+  --rdp-day_button-height: 32px;
+  --rdp-day_button-width: 32px;
+
+  --rdp-selected-border: 2px solid var(--rdp-accent-color);
+  --rdp-disabled-opacity: 0.5;
+  --rdp-outside-opacity: 0.75;
+  --rdp-today-color: var(--rdp-accent-color);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -133,4 +153,19 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+@theme inline {
+  --color-amber-50: var(--accent-1);
+  --color-amber-100: var(--accent-2);
+  --color-amber-200: var(--accent-3);
+  --color-amber-300: var(--accent-4);
+  --color-amber-400: var(--accent-5);
+  --color-amber-500: var(--accent-6);
+  --color-amber-600: var(--accent-7);
+  --color-amber-700: var(--accent-8);
+  --color-amber-800: var(--accent-9);
+  --color-amber-900: var(--accent-11);
+  --color-amber-950: var(--accent-12);
 }

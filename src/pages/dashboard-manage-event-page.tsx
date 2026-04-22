@@ -1,17 +1,4 @@
-import NavBar from "@/components/nav-bar";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,15 +6,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+// import { Textarea } from "@/components/ui/textarea";
 import {
   CreateEventRequest,
   CreateTicketTypeRequest,
@@ -49,6 +36,10 @@ import {
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { useNavigate, useParams } from "react-router";
+
+import { AdminLayout } from "@/components/admin-layout";
+import {Text,Box,Flex,Button, Heading,Badge,DropdownMenu,IconButton,AlertDialog,Card,TextArea,Dialog,Callout,Select} from "@radix-ui/themes";
+
 
 interface DateTimeSelectProperties {
   date: Date | undefined;
@@ -76,8 +67,8 @@ const DateTimeSelect: React.FC<DateTimeSelectProperties> = ({
           {/* Date */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button className="bg-gray-900 border-gray-700 border">
-                <CalendarIcon />
+              <Button variant="soft" color="gray">
+                <CalendarIcon size="16"/>
                 {date ? format(date, "PPP") : <span>Pick a Date</span>}
               </Button>
             </PopoverTrigger>
@@ -99,15 +90,15 @@ const DateTimeSelect: React.FC<DateTimeSelectProperties> = ({
 
                   setDate(correctedDate);
                 }}
-                className="rounded-md border shadow"
+                className="rounded-md border shadow "
               />
-            </PopoverContent>
+            </PopoverContent>   
           </Popover>
           {/* Time */}
           <div className="flex gap-2 items-center">
             <Input
               type="time"
-              className="w-[90px] bg-gray-900 text-white border-gray-700 border [&::-webkit-calendar-picker-indicator]:invert"
+              className="w-[90px] bg-gray-200"
               value={time}
               onChange={(e) => setTime(e.target.value)}
             />
@@ -432,352 +423,371 @@ const DashboardManageEventPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <NavBar />
-      <div className="container mx-auto px-4 py-8 max-w-xl">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">
-            {isEditMode ? "Edit Event" : "Create a New Event"}
-          </h1>
-          {isEditMode ? (
-            <>
-              {eventData.id && (
-                <p className="text-sm text-gray-400">ID: {eventData.id}</p>
-              )}
-              {eventData.createdAt && (
-                <p className="text-sm text-gray-400">
-                  Created At: {format(eventData.createdAt, "PPP")}
-                </p>
-              )}
-              {eventData.updatedAt && (
-                <p className="text-sm text-gray-400">
-                  Updated At: {format(eventData.updatedAt, "PPP")}
-                </p>
-              )}
-            </>
-          ) : (
-            <p>Fill out the form below to create your event</p>
-          )}
-        </div>
-
-        <form onSubmit={handleFormSubmit} className="space-y-4">
-          {/* Event Name */}
-          <div>
+    <AdminLayout>
+      <AdminLayout.Body>
+          <Box mb="6">
+            <Flex justify="between">
+              <Heading>
+                  {isEditMode ? "Edit Event" : "Create a New Event"}
+              </Heading>
+            </Flex>
             <div>
-              <label htmlFor="event-name" className="text-sm font-medium">
-                Event Name
-              </label>
-              <Input
-                id="event-name"
-                className="bg-gray-900 border-gray-700 text-white"
-                placeholder="Event Name"
-                value={eventData.name}
-                onChange={(e) => updateField("name", e.target.value)}
-                required
-              />
+              {isEditMode && (
+              <>
+                {eventData.id && (
+                  <Text as="p" size="2" className=" text-gray-400">
+                    ID: {eventData.id}
+                  </Text>
+                )}
+
+                {eventData.createdAt && (
+                  <Text as="p" size="2"className="text-gray-400">
+                    Created At: {format(eventData.createdAt, "PPP")}
+                  </Text>
+                )}
+
+                {eventData.updatedAt && (
+                  <Text as="p" size="2" className= "text-gray-400">
+                    Updated At: {format(eventData.updatedAt, "PPP")}
+                  </Text>
+                )}
+              </>
+            )}
+
+            {!isEditMode && (
+              <p>Fill out the form below to create your event</p>
+            )}
             </div>
-            <p className="text-gray-400 text-xs">
-              This is the public name of your event.
-            </p>
-          </div>
-
-          {/* Event Start Date Time */}
-          <div>
-            <label className="text-sm font-medium">Event Start</label>
-            <DateTimeSelect
-              date={eventData.startDate}
-              setDate={(date) => updateField("startDate", date)}
-              time={eventData.startTime}
-              setTime={(time) => updateField("startTime", time)}
-              enabled={eventDateEnabled}
-              setEnabled={setEventDateEnabled}
-            />
-            <p className="text-gray-400 text-xs">
-              The date and time that the event starts.
-            </p>
-          </div>
-
-          {/* Event End Date Time */}
-          <div>
-            <label className="text-sm font-medium">Event End</label>
-            <DateTimeSelect
-              date={eventData.endDate}
-              setDate={(date) => updateField("endDate", date)}
-              time={eventData.endTime}
-              setTime={(time) => updateField("endTime", time)}
-              enabled={eventDateEnabled}
-              setEnabled={setEventDateEnabled}
-            />
-            <p className="text-gray-400 text-xs">
-              The date and time that the event ends.
-            </p>
-          </div>
-
-          <div>
-            <label htmlFor="venue-details" className="text-sm font-medium">
-              Venue Details
-            </label>
-            <Textarea
-              id="venue-details"
-              className="bg-gray-900 border-gray-700 min-h-[100px]"
-              value={eventData.venueDetails}
-              onChange={(e) => updateField("venueDetails", e.target.value)}
-            />
-            <p className="text-gray-400 text-xs">
-              Details about the venue, please include as much detail as
-              possible.
-            </p>
-          </div>
-
-          {/* Event Sales Start Date Time */}
-          <div>
-            <label className="text-sm font-medium">Event Sales Start</label>
-            <DateTimeSelect
-              date={eventData.salesStartDate}
-              setDate={(date) => updateField("salesStartDate", date)}
-              time={eventData.salesStartTime}
-              setTime={(time) => updateField("salesStartTime", time)}
-              enabled={eventSalesDateEnabled}
-              setEnabled={setEventSalesDateEnabled}
-            />
-            <p className="text-gray-400 text-xs">
-              The date and time that ticket are available to purchase for the
-              event.
-            </p>
-          </div>
-
-          {/* Event Sales End Date Time */}
-          <div>
-            <label className="text-sm font-medium">Event Sales End</label>
-            <DateTimeSelect
-              date={eventData.salesEndDate}
-              setDate={(date) => updateField("salesEndDate", date)}
-              time={eventData.salesEndTime}
-              setTime={(time) => updateField("salesEndTime", time)}
-              enabled={eventSalesDateEnabled}
-              setEnabled={setEventSalesDateEnabled}
-            />
-            <p className="text-gray-400 text-xs">
-              The date and time that ticket are available to purchase for the
-              event.
-            </p>
-          </div>
-
-          {/* Ticket Types */}
-          <div>
-            <Card className="bg-gray-900 border-gray-700 text-white">
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <CardHeader>
-                  <div className="flex justify-between">
-                    <CardTitle className="flex gap-2 items-center text-sm">
-                      <Ticket />
-                      Ticket Types
-                    </CardTitle>
-                    <Button
-                      type="button"
-                      onClick={() => handleAddTicketType()}
-                      className="bg-gray-800 border-gray-700 text-white"
-                    >
-                      <Plus /> Add Ticket Type
-                    </Button>
+          </Box>
+          <Box>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <Card size="3" variant="surface" className=" space-y-4">
+                  {/* Event Name */}
+                <div className="mb-2">
+                  <div>
+                    <Label htmlFor="event-name" className="mb-2">Event Name</Label>
+                    <Input
+                      id="event-name"
+                      placeholder="Event Name"
+                      value={eventData.name}
+                      onChange={(e) => updateField("name", e.target.value)}
+                      required
+                    />
                   </div>
-                </CardHeader>
+                  <p className="text-gray-400 text-xs">
+                    This is the public name of your event.
+                  </p>
+                </div>
 
-                <CardContent className="space-y-2">
-                  {eventData.ticketTypes.map((ticketType) => {
-                    return (
-                      <div className="bg-gray-700 w-full p-4 rounded-lg border-gray-600">
-                        <div className="flex justify-between items-center">
-                          {/* Left */}
-                          <div>
-                            <div className="flex gap-4">
-                              <p className="text-small font-medium">
-                                {ticketType.name}
-                              </p>
-                              <Badge
-                                variant="outline"
-                                className="border-gray-600 text-white font-normal text-xs"
-                              >
-                                ${ticketType.price}
-                              </Badge>
-                            </div>
-                            {ticketType.totalAvailable && (
-                              <p className="text-gray-400">
-                                {ticketType.totalAvailable} tickets available
-                              </p>
-                            )}
-                          </div>
-                          {/* Right */}
-                          <div className="flex gap-2">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => handleEditTicketType(ticketType)}
-                            >
-                              <Edit />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              className="text-red-400"
-                              onClick={() =>
-                                handleDeleteTicketType(ticketType.id)
+                 <div>
+                  <label htmlFor="venue-details" className="text-sm font-medium">
+                    Venue Details
+                  </label>
+                  <TextArea
+                    id="venue-details"
+                    className=" min-h-[100px]"
+                    value={eventData.venueDetails}
+                    onChange={(e) => updateField("venueDetails", e.target.value)}
+                  />
+                  <p className="text-gray-400 text-xs">
+                    Details about the venue, please include as much detail as
+                    possible.
+                  </p>
+                </div>
+              </Card>
+
+              <Card size="3" variant="surface" className=" space-y-4">
+                
+                {/* Event Start Date Time */}
+                <Flex className="mb-2" gap="9" align="center">
+                  <div >
+                    <label className="text-sm font-medium">Event Start</label>
+                    <DateTimeSelect
+                      date={eventData.startDate}
+                      setDate={(date) => updateField("startDate", date)}
+                      time={eventData.startTime}
+                      setTime={(time) => updateField("startTime", time)}
+                      enabled={eventDateEnabled}
+                      setEnabled={setEventDateEnabled}
+                    />
+                    <p className="text-gray-400 text-xs">
+                      The date and time that the event starts.
+                    </p>
+                  </div>
+
+                  {/* Event End Date Time */}
+                  <div >
+                    <label className="text-sm font-medium">Event End</label>
+                    <DateTimeSelect
+                      date={eventData.endDate}
+                      setDate={(date) => updateField("endDate", date)}
+                      time={eventData.endTime}
+                      setTime={(time) => updateField("endTime", time)}
+                      enabled={eventDateEnabled}
+                      setEnabled={setEventDateEnabled}
+                    />
+                    <p className="text-gray-400 text-xs">
+                      The date and time that the event ends.
+                    </p>
+                  </div>
+                </Flex>
+
+              </Card>
+
+
+              <Card size="3" variant="surface" className="space-y-4">
+                <Flex className="mb-2" gap="9" align="center">
+                  {/* Event Sales Start Date Time */}
+                  <div>
+                    <label className="text-sm font-medium">Event Sales Start</label>
+                    <DateTimeSelect
+                      date={eventData.salesStartDate}
+                      setDate={(date) => updateField("salesStartDate", date)}
+                      time={eventData.salesStartTime}
+                      setTime={(time) => updateField("salesStartTime", time)}
+                      enabled={eventSalesDateEnabled}
+                      setEnabled={setEventSalesDateEnabled}
+                    />
+                    <p className="text-gray-400 text-xs">
+                      When tickets go on sale
+                    </p>
+                  </div>
+
+                  {/* Event Sales End Date Time */}
+                  <div>
+                    <label className="text-sm font-medium">Event Sales End</label>
+                    <DateTimeSelect
+                      date={eventData.salesEndDate}
+                      setDate={(date) => updateField("salesEndDate", date)}
+                      time={eventData.salesEndTime}
+                      setTime={(time) => updateField("salesEndTime", time)}
+                      enabled={eventSalesDateEnabled}
+                      setEnabled={setEventSalesDateEnabled}
+                    />
+                    <p className="text-gray-400 text-xs">
+                      When tickets sale ends
+                    </p>
+                  </div>
+                </Flex>
+              </Card>
+
+
+              <Box>
+              {/* Ticket Types */}
+                <div className="mt-4">
+                  <Card size="2">
+                    <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <Flex justify="between" className="mb-3">
+                          <Text weight="bold" className="flex gap-2 items-center">
+                            <Ticket />
+                            Ticket Types
+                          </Text>
+                          <Button 
+                          type="button"
+                          variant="soft"
+                           onClick={() => handleAddTicketType()}>
+                            <Plus /> Add Ticket Type
+                          </Button>
+                        </Flex>
+
+                        {eventData.ticketTypes.map((ticketType) => {
+                          return (
+                            <Card>
+                              <div className="flex justify-between items-center">
+                                {/* Left */}
+                                <div>
+                                  <div className="flex gap-4">
+                                    <Text weight="bold">
+                                      {ticketType.name}
+                                    </Text>
+                                    <Badge color="grass" variant="outline">
+                                      ${ticketType.price}
+                                    </Badge>
+                                  </div>
+                                  {ticketType.totalAvailable && (
+                                    <p className="text-gray-400">
+                                      {ticketType.totalAvailable} tickets available
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Right */}
+                                <div className="flex gap-2">
+                                  <IconButton
+                                    variant="ghost"
+                                    onClick={() => handleEditTicketType(ticketType)}
+                                  >
+                                    <Edit width="18"/>
+                                  </IconButton>
+                                  <IconButton
+                                    variant="ghost"
+                                    color="red"
+                                    onClick={() =>
+                                      handleDeleteTicketType(ticketType.id)
+                                    }
+                                  >
+                                    <Trash width="18"/>
+                                  </IconButton>
+                                </div>
+                              </div>
+                            </Card>
+                          );
+                        })}
+                      <Dialog.Content >
+                          <Dialog.Title mb="1">Add Ticket Type</Dialog.Title>
+                          <Dialog.Description className="text-gray-400">
+                            Please enter details of the ticket type
+                          </Dialog.Description>
+
+                        <div className="space-y-5 mt-4">
+                        {/* Ticket Type Name */}
+                        <div className="space-y-2">
+                          <Label htmlFor="ticket-type-name">Name</Label>
+                          <Input
+                            id="ticket-type-name"
+                            value={currentTicketType?.name}
+                            onChange={(e) =>
+                              setCurrentTicketType(
+                                currentTicketType
+                                  ? { ...currentTicketType, name: e.target.value }
+                                  : undefined,
+                              )
+                            }
+                            placeholder="e.g General Admission, VIP, etc."
+                          />
+                        </div>
+
+                        <div className="flex gap-4">
+                          {/* Price */}
+                          <div className="space-y-2 w-full">
+                            <Label htmlFor="ticket-type-price">Price</Label>
+                            <Input
+                              id="ticket-type-price"
+                              type="number"
+                              value={currentTicketType?.price}
+                              onChange={(e) =>
+                                setCurrentTicketType(
+                                  currentTicketType
+                                    ? {
+                                        ...currentTicketType,
+                                        price: Number.parseFloat(e.target.value),
+                                      }
+                                    : undefined,
+                                )
                               }
-                            >
-                              <Trash />
-                            </Button>
+                            />
+                          </div>
+
+                          {/* Total Available */}
+                          <div className="space-y-2 w-full">
+                            <Label htmlFor="ticket-type-total-available">
+                              Total Available
+                            </Label>
+                            <Input
+                              id="ticket-type-total-available"
+                              type="number"
+                              value={currentTicketType?.totalAvailable}
+                              onChange={(e) =>
+                                setCurrentTicketType(
+                                  currentTicketType
+                                    ? {
+                                        ...currentTicketType,
+                                        totalAvailable: Number.parseFloat(
+                                          e.target.value,
+                                        ),
+                                      }
+                                    : undefined,
+                                )
+                              }
+                            />
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </CardContent>
-                <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                  <DialogHeader>
-                    <DialogTitle>Add Ticket Type</DialogTitle>
-                    <DialogDescription className="text-gray-400">
-                      Please enter details of the ticket type
-                    </DialogDescription>
-                  </DialogHeader>
 
-                  {/* Ticket Type Name */}
-                  <div className="space-y-1">
-                    <Label htmlFor="ticket-type-name">Name</Label>
-                    <Input
-                      id="ticket-type-name"
-                      className="bg-gray-800 border-gray-700"
-                      value={currentTicketType?.name}
-                      onChange={(e) =>
-                        setCurrentTicketType(
-                          currentTicketType
-                            ? { ...currentTicketType, name: e.target.value }
-                            : undefined,
-                        )
-                      }
-                      placeholder="e.g General Admission, VIP, etc."
-                    />
-                  </div>
+                        {/* Ticket Type Description */}
+                        <div className="space-y-1">
+                          <Label htmlFor="ticket-type-description">Description</Label>
+                          <TextArea
+                            id="ticket-type-description"
+                            value={currentTicketType?.description}
+                            onChange={(e) =>
+                              setCurrentTicketType(
+                                currentTicketType
+                                  ? {
+                                      ...currentTicketType,
+                                      description: e.target.value,
+                                    }
+                                  : undefined,
+                              )
+                            }
+                          />
+                        </div>
+                        <Flex justify="end" gap="2">
+                          <Dialog.Close>
+                            <Button variant="soft" color="gray">
+                              Cancel
+                            </Button>
+                          </Dialog.Close>
+                          <Button type="button"
+                            onClick={handleSaveTicketType}
+                          >
+                            Save
+                          </Button>
+                        </Flex>
+                        
+                        </div>
 
-                  <div className="flex gap-4">
-                    {/* Price */}
-                    <div className="space-y-1 w-full">
-                      <Label htmlFor="ticket-type-price">Price</Label>
-                      <Input
-                        id="ticket-type-price"
-                        type="number"
-                        value={currentTicketType?.price}
-                        onChange={(e) =>
-                          setCurrentTicketType(
-                            currentTicketType
-                              ? {
-                                  ...currentTicketType,
-                                  price: Number.parseFloat(e.target.value),
-                                }
-                              : undefined,
-                          )
-                        }
-                        className="bg-gray-800 border-gray-700"
-                      />
-                    </div>
+                      </Dialog.Content>
+                    </Dialog.Root>
+                  </Card>
+                </div>
+              </Box>
 
-                    {/* Total Available */}
-                    <div className="space-y-1 w-full">
-                      <Label htmlFor="ticket-type-total-available">
-                        Total Available
-                      </Label>
-                      <Input
-                        id="ticket-type-total-available"
-                        type="number"
-                        value={currentTicketType?.totalAvailable}
-                        onChange={(e) =>
-                          setCurrentTicketType(
-                            currentTicketType
-                              ? {
-                                  ...currentTicketType,
-                                  totalAvailable: Number.parseFloat(
-                                    e.target.value,
-                                  ),
-                                }
-                              : undefined,
-                          )
-                        }
-                        className="bg-gray-800 border-gray-700"
-                      />
-                    </div>
-                  </div>
 
-                  {/* Ticket Type Description */}
-                  <div className="space-y-1">
-                    <Label htmlFor="ticket-type-description">Description</Label>
-                    <Textarea
-                      id="ticket-type-description"
-                      className="bg-gray-800 border-gray-700"
-                      value={currentTicketType?.description}
-                      onChange={(e) =>
-                        setCurrentTicketType(
-                          currentTicketType
-                            ? {
-                                ...currentTicketType,
-                                description: e.target.value,
-                              }
-                            : undefined,
-                        )
-                      }
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      className="bg-white text-black hover:bg-gray-300"
-                      onClick={handleSaveTicketType}
-                    >
-                      Save
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </Card>
-          </div>
+              {/* Status */}
+              <div className="space-y-1">
+                <Label>Status</Label>
+                <Select.Root
+                  value={eventData.status}
+                  onValueChange={(value) => updateField("status", value)}
+                >
+                  <Select.Trigger 
+                    
+                    placeholder="Select Event Status"
+                  />
 
-          {/* Status */}
-          <div className="space-y-1">
-            <Label>Status</Label>
-            <Select
-              value={eventData.status}
-              onValueChange={(value) => updateField("status", value)}
-            >
-              <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700 text-white">
-                <SelectValue placeholder="Select Event Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-900 border-gray-700 text-white">
-                <SelectItem value={EventStatusEnum.DRAFT}>Draft</SelectItem>
-                <SelectItem value={EventStatusEnum.PUBLISHED}>
-                  Published
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-gray-400 text-xs">
-              Please select the status of the new event.
-            </p>
-          </div>
+                  <Select.Content>
+                    <Select.Item value={EventStatusEnum.DRAFT}>Draft</Select.Item>
+                    <Select.Item value={EventStatusEnum.PUBLISHED}>
+                      Published
+                    </Select.Item>
+                  </Select.Content>
+                </Select.Root>
+                <p className="text-gray-400 text-xs">
+                  Please select the status of the new event.
+                </p>
+              </div>
 
-          {error && (
-            <Alert variant="destructive" className="bg-gray-900 border-red-700">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+        
+              {error && (
+                <Callout.Root variant="soft" color="red"  className="my-3">
+                <Callout.Icon>
+                  <AlertCircle className="h-4 w-4" />
+                </Callout.Icon>
+                  <Callout.Text><Text weight="bold">Error :</Text> {error}</Callout.Text>
+                </Callout.Root>
+              )}
 
-          <div>
-            <Button onClick={handleFormSubmit}>
-              {isEditMode ? "Update" : "Submit"}
-            </Button>
-          </div>
-        </form>
-        {/* For Development Only */}
-        {/* <p className="mt-8 font-mono text-white">{JSON.stringify(eventData)}</p> */}
-      </div>
-    </div>
+              <div>
+                <Button onClick={handleFormSubmit}>
+                  {isEditMode ? "Update" : "Submit"}
+                </Button>
+              </div>
+
+            </form>
+          </Box>
+
+      </AdminLayout.Body>
+    </AdminLayout>
+    
   );
 };
 

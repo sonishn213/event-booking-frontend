@@ -2,7 +2,7 @@ import { useAuth } from "react-oidc-context";
 import { IconButton, Heading, Flex, Button, Text } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Search, ChevronsDown } from "lucide-react";
+import { AlertCircle, Search, ChevronsDown, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PublishedEventSummary, SpringBootPagination } from "@/domain/domain";
 import { listPublishedEvents, searchPublishedEvents } from "@/lib/api";
@@ -10,6 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import PublishedEventCard from "@/components/published-event-card";
 import { SimplePagination } from "@/components/simple-pagination";
 import AttendeeNavBar from "@/components/at-navbar";
+import { Link } from "react-router";
+import ButtonAlt from "@/components/ui/button-alt";
 
 const AttendeeLandingPage: React.FC = () => {
   const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } =
@@ -88,12 +90,13 @@ const AttendeeLandingPage: React.FC = () => {
           <div className="container  mx-auto">
             <AttendeeNavBar />
           </div>
-          <div className="container  mx-auto  pt-20">
+          <div className="container  mx-auto  pt-14">
             <h1
-              className="text-9xl font-black
-           mb-12 text-left tracking-tighter "
+              className="text-8xl font-black
+           mb-12 text-left tracking-tighter font-user"
             >
-              FIND EVENTS
+              EXPLORE
+              <br /> EVENTS
             </h1>
 
             {/* <div className="flex gap-2 justify-start w-full mb-3">
@@ -110,24 +113,21 @@ const AttendeeLandingPage: React.FC = () => {
             </div>
           </div> */}
             <Flex gap="4">
-              <div className="md:w-1/3">
-                <p>
+              <div className="md:w-1/2">
+                <Text size="4">
                   Lorem, ipsum dolor sit amet consectetur adipisicing elit.
                   Harum accusantium saepe deserunt atque debitis. Animi omnis
                   eaque quasi voluptatum sunt reiciendis, distinctio ratione
                   culpa pariatur!
-                </p>
+                </Text>
               </div>
               <div>
-                <Flex
-                  className="group/buttonhero  text-2xl font-black tracking-tight border-3 border-orange-300 hover:border-orange-200 hover:text-orange-100 rounded-full ps-10 pe-1.5 py-1   cursor-pointer transition duration-500"
-                  align="center"
-                >
-                  Browse Now
+                <ButtonAlt>
+                  Browse
                   <div className="bg-orange-300 group-hover/buttonhero:bg-orange-200 text-orange-600 rounded-full p-2 -mr-0.5 ml-2 transition duration-500">
                     <ChevronsDown size="28" />
                   </div>
-                </Flex>
+                </ButtonAlt>
               </div>
             </Flex>
           </div>
@@ -135,18 +135,34 @@ const AttendeeLandingPage: React.FC = () => {
       </section>
 
       {/* Hero */}
-      <section className="bg-slate-100">
-        <div className="container mx-auto px-4 pt-12">
-          <Heading size="8" weight="bold">
-            Discover Events You Love
-          </Heading>
-          <div className="w-1/2 mb-8 mt-2">
-            <Text size="4" className="text-gray-700">
-              Browse curated listings, compare options, and easily book
-              experiences that fit your interests, schedule, budget, and
-              preferred locations seamlessly today.
-            </Text>
-          </div>
+      <section className="">
+        <div className="container mx-auto px-4 pt-12 pb-12">
+          <Flex justify="between" align="end" className="mb-8">
+            <div className="w-1/2  mt-2">
+              <Heading
+                size="8"
+                weight="bold"
+                className="font-user text-zinc-800 uppercase"
+              >
+                Discover The <span className="text-orange-500"> Events</span>{" "}
+                You Love
+              </Heading>
+              {/* <Text size="4" className="text-zinc-500">
+                Browse curated listings, compare options, and easily book
+                experiences that fit your interests, schedule, budget, and
+                preferred locations seamlessly today.
+              </Text> */}
+            </div>
+            <div>
+              <Link to={`/events/`}>
+                <Text className="font-user text-orange-500  hover:underline decoration-dashed underline-offset-6">
+                  <Flex gap="1">
+                    <span>View All</span> <ArrowUpRight />
+                  </Flex>
+                </Text>
+              </Link>
+            </div>
+          </Flex>
 
           {/* Published Event Cards */}
           <div className="grid grid-cols-2 gap-4  md:grid-cols-3">
@@ -157,15 +173,6 @@ const AttendeeLandingPage: React.FC = () => {
               />
             ))}
           </div>
-
-          {publishedEvents && (
-            <div className="w-full flex justify-center py-8">
-              <SimplePagination
-                pagination={publishedEvents}
-                onPageChange={setPage}
-              />{" "}
-            </div>
-          )}
         </div>
       </section>
     </div>

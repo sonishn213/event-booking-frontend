@@ -1,16 +1,31 @@
 import RandomEventImage from "@/components/random-event-image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Box,
+  Grid,
+  Heading,
+  ScrollArea,
+  Text,
+  Card,
+  Radio,
+  RadioCards,
+  Flex,
+  Dialog,
+  Button,
+} from "@radix-ui/themes";
 import {
   PublishedEventDetails,
   PublishedEventTicketTypeDetails,
 } from "@/domain/domain";
 import { getPublishedEvent } from "@/lib/api";
-import { AlertCircle, MapPin } from "lucide-react";
+import { AlertCircle, ArrowUpRight, Calendar, Car, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { Link, useNavigate, useParams } from "react-router";
+import { format } from "date-fns";
+import ButtonAlt from "@/components/ui/button-alt";
+import AttendeeNavBar from "@/components/at-navbar";
 
 const PublishedEventsPage: React.FC = () => {
   const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } =
@@ -67,102 +82,131 @@ const PublishedEventsPage: React.FC = () => {
     return <p>Loading...</p>;
   }
 
+  const displayDate =
+    publishedEvent?.start && publishedEvent?.end
+      ? format(publishedEvent.start, "PP") +
+        " - " +
+        format(publishedEvent.end, "PP")
+      : "Dates TBD";
+
   return (
-    <div className="bg-black min-h-screen text-white">
-      {/* Nav */}
-      <div className="flex justify-end p-4 container mx-auto">
-        {isAuthenticated ? (
-          <div className="flex gap-4">
-            <Button
-              onClick={() => navigate("/dashboard/events")}
-              className="cursor-pointer"
-            >
-              Dashboard
-            </Button>
-            <Button
-              className="cursor-pointer"
-              onClick={() => signoutRedirect()}
-            >
-              Log out
-            </Button>
-          </div>
-        ) : (
-          <div className="flex gap-4">
-            <Button className="cursor-pointer" onClick={() => signinRedirect()}>
-              Log in
-            </Button>
-          </div>
-        )}
+    <div className=" min-h-screen ">
+      <div className="container  mx-auto">
+        <AttendeeNavBar />
       </div>
-
-      <main className="container mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="grid grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
-          {/* Left Column */}
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{publishedEvent?.name}</h1>
-            <p className="text-lg flex gap-2 text-gray-300">
-              <MapPin />
-              {publishedEvent?.venue}
-            </p>
-          </div>
-          {/* Right Column */}
-          <div className="bg-gray-600 rounded-lg w-full max-w-sm overflow-hidden">
-            <RandomEventImage />
-          </div>
-        </div>
-
-        <h2 className="text-2xl font-bold mb-6">Available Tickets</h2>
-        <div className="flex gap-2">
-          {/* Left */}
-          <div className="w-1/2">
-            {publishedEvent?.ticketTypes?.map((ticketType) => (
-              <Card
-                className="bg-gray-800 border-gray-600 hover:bg-gray-700 text-white cursor-pointer gap-0 mb-2"
-                key={ticketType.id}
-                onClick={() => setSelectedTicketType(ticketType)}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">{ticketType.name}</h3>
-                    <span className="text-xl font-bold ">
-                      ${ticketType.price}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 text-sm">
-                    {ticketType.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Right */}
-          <div className="w-1/2 text-white">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-600">
-              <h2 className="text-2xl font-bold">{selectedTicketType?.name}</h2>
-              <div className="mb-6">
-                <span className="text-3xl font-bold">
-                  ${selectedTicketType?.price}
-                </span>
-              </div>
-              <div className="mb-6">
-                <p className="text-gray-300">
-                  {selectedTicketType?.description}
-                </p>
-              </div>
-              <Link
-                to={`/events/${publishedEvent?.id}/purchase/${selectedTicketType?.id}`}
-              >
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 cursor-pointer">
-                  Purchase Ticket
-                </Button>
-              </Link>
+      <main className="container mx-auto px-4 pb-16 pt-10">
+        <Grid columns="2" gap="6">
+          <div>
+            <div className="rounded-lg overflow-hidden h-full">
+              <RandomEventImage />
             </div>
           </div>
-        </div>
+          <Card size="3">
+            <Flex direction="column" className="h-full" justify="between">
+              <div>
+                <Heading className="text-4xl font-bold capitalize" mb="4">
+                  {publishedEvent?.name}
+                </Heading>
+                <div>
+                  <Text className="text-md flex gap-2 items-center">
+                    <MapPin size="18" />
+                    {publishedEvent?.venue}
+                  </Text>
+                  <Text className="text-md flex gap-2 items-center">
+                    <Calendar size="16" />
+                    {displayDate}
+                  </Text>
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <div>
+                  <Flex justify="between" align="center">
+                    <Text as="p" weight="bold">
+                      Selected Ticket
+                    </Text>
+                    {(publishedEvent?.ticketTypes?.length || 0) > 1 && (
+                      <Dialog.Root>
+                        <Dialog.Trigger>
+                          <Text className=" text-orange-500 cursor-pointer  hover:underline decoration-dashed underline-offset-6">
+                            <Flex gap="1">
+                              <span>Change</span>
+                            </Flex>
+                          </Text>
+                        </Dialog.Trigger>
+                        <Dialog.Content maxWidth="450px">
+                          <Dialog.Title>Select Ticket</Dialog.Title>
+                          <div>
+                            <Dialog.Close>
+                              <RadioCards.Root
+                                columns="1"
+                                value={selectedTicketType?.id}
+                              >
+                                {publishedEvent?.ticketTypes?.map(
+                                  (ticketType) => (
+                                    <RadioCards.Item
+                                      value={ticketType.id}
+                                      key={ticketType.id}
+                                      onClick={() =>
+                                        setSelectedTicketType(ticketType)
+                                      }
+                                    >
+                                      <Flex direction="column" width="100%">
+                                        <Text weight="bold">
+                                          {ticketType.name}
+                                        </Text>
+                                        <p className=" text-sm">
+                                          {ticketType.description}
+                                        </p>
+                                      </Flex>
+                                      <Text className="text-lg font-bold">
+                                        {" "}
+                                        ${ticketType.price}
+                                      </Text>
+                                    </RadioCards.Item>
+                                  ),
+                                )}
+                              </RadioCards.Root>
+                            </Dialog.Close>
+                          </div>
+                          <Flex justify="end" className="mt-5">
+                            <Dialog.Close>
+                              <Button variant="soft" color="gray">
+                                Cancel
+                              </Button>
+                            </Dialog.Close>
+                          </Flex>
+                        </Dialog.Content>
+                      </Dialog.Root>
+                    )}
+                  </Flex>
+
+                  <Card className="mt-2">
+                    <Flex gap="4" align="center" justify="between">
+                      <div>
+                        <Text className="text-xl " weight="bold">
+                          {selectedTicketType?.name}
+                        </Text>
+                        <Text as="p">{selectedTicketType?.description}</Text>
+                      </div>
+                      <Text className="text-xl " weight="bold">
+                        ${selectedTicketType?.price}
+                      </Text>
+                    </Flex>
+                  </Card>
+                </div>
+
+                <div className="mt-6 w-1/2">
+                  <Link
+                    to={`/events/${publishedEvent?.id}/purchase/${selectedTicketType?.id}`}
+                  >
+                    <ButtonAlt>Purchase</ButtonAlt>
+                  </Link>
+                </div>
+              </div>
+            </Flex>
+          </Card>
+        </Grid>
       </main>
     </div>
   );

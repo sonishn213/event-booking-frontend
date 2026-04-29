@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { purchaseTicket } from "@/lib/api";
+import {
+  RazorpaySuccessResponse,
+  RazorpayVerifyRequest,
+} from "@/domain/domain";
+import { purchaseTicket, purchaseVerifyTicket } from "@/lib/api";
 import { CheckCircle, CreditCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
@@ -26,12 +30,55 @@ const PurchaseTicketPage: React.FC = () => {
   }, [isPurchaseSuccess]);
 
   const handlePurchase = async () => {
+    // setIsPurchaseASuccess(true);
+    // return;
     if (isLoading || !user?.access_token || !eventId || !ticketTypeId) {
       return;
     }
     try {
-      await purchaseTicket(user.access_token, eventId, ticketTypeId);
-      setIsPurchaseASuccess(true);
+      const paymentResponse = await purchaseTicket(
+        user.access_token,
+        eventId,
+        ticketTypeId,
+      );
+
+      const options = {
+        key: "rzp_test_SiQWDCIQfKglbG",
+        amount: paymentResponse.amount,
+        currency: paymentResponse.currency,
+        name: "Eventz",
+        description: "Event ticket purchase",
+        order_id: paymentResponse.id,
+        handler: async function (response: RazorpaySuccessResponse) {
+          const isSuccess = await purchaseVerifyTicket(
+            user.access_token,
+            eventId,
+            ticketTypeId,
+            {
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              signature: response.razorpay_signature,
+            } as RazorpayVerifyRequest,
+          );
+
+          console.log("isSuccess");
+          console.log(isSuccess);
+
+          setIsPurchaseASuccess(true);
+        },
+        prefill: {
+          name: "User Name",
+          email: "user@example.com",
+        },
+        theme: {
+          color: "#ff6900",
+        },
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+
+      console.log(paymentResponse);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

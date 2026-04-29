@@ -11,7 +11,10 @@ import {
   TicketValidationRequest,
   TicketValidationResponse,
   UpdateEventRequest,
-  PaginationResponse
+  PaginationResponse,
+  PaymentResponse,
+  RazorpaySuccessResponse,
+  RazorpayVerifyRequest
 } from "@/domain/domain";
 
 export const createEvent = async (
@@ -142,7 +145,7 @@ export const deleteEvent = async (
 
 export const listPublishedEvents = async (
   page: number,
-): Promise<SpringBootPagination<PublishedEventSummary>> => {
+): Promise<PaginationResponse<PublishedEventSummary>> => {
   const response = await fetch(`/api/v1/published-events?page=${page}&size=4`, {
     method: "GET",
     headers: {
@@ -161,13 +164,13 @@ export const listPublishedEvents = async (
     }
   }
 
-  return responseBody as SpringBootPagination<PublishedEventSummary>;
+  return responseBody as PaginationResponse<PublishedEventSummary>;
 };
 
 export const searchPublishedEvents = async (
   query: string,
   page: number,
-): Promise<SpringBootPagination<PublishedEventSummary>> => {
+): Promise<PaginationResponse<PublishedEventSummary>> => {
   const response = await fetch(
     `/api/v1/published-events?q=${query}&page=${page}&size=4`,
     {
@@ -189,7 +192,7 @@ export const searchPublishedEvents = async (
     }
   }
 
-  return responseBody as SpringBootPagination<PublishedEventSummary>;
+  return responseBody as PaginationResponse<PublishedEventSummary>;
 };
 
 export const getPublishedEvent = async (
@@ -220,9 +223,9 @@ export const purchaseTicket = async (
   accessToken: string,
   eventId: string,
   ticketTypeId: string,
-): Promise<void> => {
+): Promise<PaymentResponse> => {
   const response = await fetch(
-    `/api/v1/events/${eventId}/ticket-types/${ticketTypeId}/tickets`,
+    `/api/v1/events/${eventId}/ticket-types/${ticketTypeId}/tickets/purchase`,
     {
       method: "POST",
       headers: {
@@ -232,8 +235,9 @@ export const purchaseTicket = async (
     },
   );
 
+  const responseBody = await response.json();
+
   if (!response.ok) {
-    const responseBody = await response.json();
     if (isErrorResponse(responseBody)) {
       throw new Error(responseBody.error);
     } else {
@@ -241,12 +245,46 @@ export const purchaseTicket = async (
       throw new Error("An unknown error occurred");
     }
   }
+
+  return responseBody as PaymentResponse;
+};
+
+export const purchaseVerifyTicket = async (
+  accessToken: string,
+  eventId: string,
+  ticketTypeId: string,
+  razorPayDetails: RazorpayVerifyRequest,
+): Promise<boolean> => {
+  const response = await fetch(
+    `/api/v1/events/${eventId}/ticket-types/${ticketTypeId}/tickets/purchase-verify`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(razorPayDetails),
+    },
+  );
+
+  const responseBody = await response.json();
+
+  if (!response.ok) {
+    if (isErrorResponse(responseBody)) {
+      throw new Error(responseBody.error);
+    } else {
+      console.error(JSON.stringify(responseBody));
+      throw new Error("An unknown error occurred");
+    }
+  }
+
+  return true;
 };
 
 export const listTickets = async (
   accessToken: string,
   page: number,
-): Promise<SpringBootPagination<TicketSummary>> => {
+): Promise<PaginationResponse<TicketSummary>> => {
   const response = await fetch(`/api/v1/tickets?page=${page}&size=8`, {
     method: "GET",
     headers: {
@@ -266,7 +304,7 @@ export const listTickets = async (
     }
   }
 
-  return responseBody as SpringBootPagination<TicketSummary>;
+  return responseBody as PaginationResponse<TicketSummary>;
 };
 
 export const getTicket = async (

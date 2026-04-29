@@ -8,26 +8,114 @@ import {
   Text,
   Heading,
   Grid,
+  Avatar,
+  Popover,
+  Button,
 } from "@radix-ui/themes";
-import { Bell, FerrisWheel } from "lucide-react";
+import {
+  ArrowDown,
+  Bell,
+  ChevronDown,
+  FerrisWheel,
+  LogOut,
+  Ticket,
+} from "lucide-react";
+import { Link } from "react-router";
+import { useAuth } from "react-oidc-context";
 
 const LogoSide: React.FC = () => {
   return (
-    <Box pt="3">
-      <Flex gap="2" justify="between" align="center">
-        <Flex gap="2" align="center">
-          <FerrisWheel />
-          <Heading>Eventz</Heading>
+    <Flex gap="2" align="center">
+      <FerrisWheel />
+      <Heading>Eventz</Heading>
+    </Flex>
+  );
+};
+
+const Profile: React.FC = () => {
+  const { signoutRedirect, user } = useAuth();
+  return (
+    <Popover.Root>
+      <Popover.Trigger>
+        <Flex align="center" gap="1" className="cursor-pointer">
+          <Avatar
+            // src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+            fallback={
+              user?.profile?.preferred_username?.slice(0, 2).toUpperCase() ||
+              "A"
+            }
+            className="border-1 border-orange-200"
+          />
+          <ChevronDown size="14" />
         </Flex>
-      </Flex>
-    </Box>
+      </Popover.Trigger>
+      <Popover.Content width="240px" size="1">
+        <p className="text-sm font-medium">{user?.profile?.name}</p>
+        <p className="text-sm text-gray-400">{user?.profile?.email}</p>
+
+        <Separator size="4" my="2" />
+        <Link to="/dashboard/tickets">
+          <Flex
+            gap="3"
+            align="center"
+            className="hover:bg-gray-100 cursor-pointer px-2 py-1 rounded-md"
+          >
+            <Ticket size="16" />
+            <Text size="3">Your tickets</Text>
+          </Flex>
+        </Link>
+
+        <Separator size="4" my="2" />
+
+        <Flex
+          gap="3"
+          align="center"
+          className="hover:bg-gray-100 cursor-pointer px-2 py-1 rounded-md"
+          onClick={() => signoutRedirect()}
+        >
+          <LogOut size="16" color="red" />
+          <Text color="red" size="3">
+            Log out
+          </Text>
+        </Flex>
+      </Popover.Content>
+    </Popover.Root>
   );
 };
 
 const AttendeeNavBar: React.FC = () => {
+  const { isAuthenticated, isLoading, signinRedirect } = useAuth();
+
   return (
     <div>
-      <LogoSide />
+      <Box pt="3" pb="3">
+        <Flex gap="2" justify="between" align="center">
+          <LogoSide />
+
+          <Flex gap="9">
+            <Flex gap="6" className="uppercase" align="center">
+              <Link to="/">Home</Link>
+              <Link to="/events">Events</Link>
+              <Link to="/events">About us</Link>
+              <Link to="/events">Contact</Link>
+            </Flex>
+            <div>
+              {isAuthenticated ? (
+                <Profile />
+              ) : (
+                <div
+                  className="cursor-pointer"
+                  onClick={() => signinRedirect()}
+                >
+                  <div className="font-user border-2 border-orange-400 py-2 px-6 rounded-full tracking-wider  hover:bg-orange-400">
+                    Log In
+                  </div>
+                </div>
+              )}
+            </div>
+          </Flex>
+        </Flex>
+      </Box>
     </div>
   );
 };

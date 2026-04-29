@@ -1,6 +1,5 @@
 import { PublishedEventSummary } from "@/domain/domain";
-import { Flex, Inset } from "@radix-ui/themes";
-import { Card } from "./ui/card";
+import { Card, Flex, Inset } from "@radix-ui/themes";
 import { Calendar, Heart, MapPin, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router";
@@ -22,13 +21,13 @@ const PublishedEventCard: React.FC<PublishedEventCardProperties> = ({
 
   return (
     <Link to={`/events/${publishedEvent.id}`}>
-      <Card className="px-4 py-4 gap-3 shadow-none border-0 rounded-3xl">
+      <Card size="2">
         {/* Card Image */}
-        <div className="  overflow-hidden rounded-xl">
+        <div className="  overflow-hidden rounded-lg mb-3">
           <RandomEventImage />
         </div>
         <div>
-          <h3 className="text-xl font-bold  mb-6 capitalize">
+          <h3 className="text-2xl font-bold  mb-6 capitalize">
             {publishedEvent.name}
           </h3>
 

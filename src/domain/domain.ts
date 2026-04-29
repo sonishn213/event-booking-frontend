@@ -173,6 +173,10 @@ export interface TicketSummaryTicketType {
   id: string;
   name: string;
   price: number;
+  eventName: string;
+  eventVenue: string;
+  eventStart: Date;
+  eventEnd: Date;
 }
 
 export interface TicketSummary {
@@ -211,4 +215,22 @@ export interface TicketValidationRequest {
 export interface TicketValidationResponse {
   ticketId: string;
   status: TicketValidationStatus;
+}
+
+export interface PaymentResponse {
+  id: string,
+  amount: BigInteger,
+  currency: string
+}
+
+export interface RazorpaySuccessResponse {
+  razorpay_payment_id: string
+  razorpay_order_id: string
+  razorpay_signature: string
+}
+
+export interface RazorpayVerifyRequest {
+  paymentId: string
+  orderId: string
+  signature: string
 }

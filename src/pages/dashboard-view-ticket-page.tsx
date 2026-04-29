@@ -64,6 +64,11 @@ const DashboardViewTicketPage: React.FC = () => {
     return <p>Loading..</p>;
   }
 
+  const displayDate =
+    ticket.eventStart && ticket.eventEnd
+      ? format(ticket.eventStart, "Pp") + " " + format(ticket.eventEnd, "Pp")
+      : "Dates TBD";
+
   return (
     <div className="bg-black min-h-screen text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -87,10 +92,7 @@ const DashboardViewTicketPage: React.FC = () => {
 
           <div className="flex items-center gap-2 text-purple-300 mb-8">
             <Calendar className="w-4 text-purple-200" />
-            <div>
-              {format(ticket.eventStart, "Pp")} -{" "}
-              {format(ticket.eventEnd, "Pp")}
-            </div>
+            <div>{displayDate}</div>
           </div>
 
           <div className="flex justify-center mb-8">

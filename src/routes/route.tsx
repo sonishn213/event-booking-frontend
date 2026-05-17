@@ -18,6 +18,10 @@ import DashboardPage from "../pages/dashboard-page.tsx";
 import DashboardViewTicketPage from "../pages/dashboard-view-ticket-page.tsx";
 import DashboardValidateQrPage from "../pages/dashboard-validate-qr-page.tsx";
 import PublishedListEventsPage from "@/pages/published-list-events.tsx";
+import ComingSoon from "@/pages/coming-soon.tsx";
+import UserRole from "@/domain/enums/UserRoles.ts";
+import OrganizerLandingPage from "@/pages/organizer-landing-page.tsx";
+import BecomeOrganizerSuccessPage from "@/pages/become-organizer-success-page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -59,8 +63,24 @@ const router = createBrowserRouter([
   {
     path: "/organizers",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute role={UserRole.ORGANIZER}>
         <OrganizersLandingPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/become-organizer",
+    element: (
+      <ProtectedRoute>
+        <OrganizerLandingPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/become-organizer/success/:passcode",
+    element: (
+      <ProtectedRoute>
+        <BecomeOrganizerSuccessPage />
       </ProtectedRoute>
     ),
   },
@@ -143,6 +163,14 @@ const router = createBrowserRouter([
         <DashboardManageEventPageOLD />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: "/about",
+    element: <ComingSoon />,
+  },
+  {
+    path: "/contact",
+    element: <ComingSoon />,
   },
 ]);
 

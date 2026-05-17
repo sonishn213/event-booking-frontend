@@ -14,7 +14,8 @@ import {
   PaginationResponse,
   PaymentResponse,
   RazorpaySuccessResponse,
-  RazorpayVerifyRequest
+  RazorpayVerifyRequest,
+  BecomeOrganizerRequest
 } from "@/domain/domain";
 
 export const createEvent = async (
@@ -267,15 +268,10 @@ export const purchaseVerifyTicket = async (
     },
   );
 
-  const responseBody = await response.json();
+  // const responseBody = await response.json();
 
   if (!response.ok) {
-    if (isErrorResponse(responseBody)) {
-      throw new Error(responseBody.error);
-    } else {
-      console.error(JSON.stringify(responseBody));
-      throw new Error("An unknown error occurred");
-    }
+    return false;
   }
 
   return true;
@@ -376,4 +372,30 @@ export const validateTicket = async (
   }
 
   return responseBody as Promise<TicketValidationResponse>;
+};
+
+export const becomeOrganizer = async (
+  accessToken: string,
+  request: BecomeOrganizerRequest,
+): Promise<void> => {
+  const response = await fetch("/api/v1/users/become-organizer", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+
+  if (!response.ok) {
+    const responseBody = await response.json();
+
+    if (isErrorResponse(responseBody)) {
+      throw new Error(responseBody.error);
+    } else {
+      console.error(JSON.stringify(responseBody));
+      throw new Error("An unknown error occurred");
+    }
+  }
 };

@@ -115,17 +115,19 @@ const AttendeeLandingPage: React.FC = () => {
             <Flex gap="4">
               <div className="md:w-1/2">
                 <Text size="4">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Harum accusantium saepe deserunt atque debitis. Animi omnis
-                  eaque quasi voluptatum sunt reiciendis, distinctio ratione
-                  culpa pariatur!
+                  Plan your perfect event with a streamlined booking experience
+                  designed for efficiency and flexibility. From corporate
+                  conferences to private celebrations, our platform enables
+                  seamless venue discovery, real-time availability checks, and
+                  instant confirmations.
                 </Text>
               </div>
               <div>
                 <ButtonAlt>
                   Browse
                   <div className="bg-orange-300 group-hover/buttonhero:bg-orange-200 text-orange-600 rounded-full p-2 -mr-0.5 ml-2 transition duration-500">
-                    <ChevronsDown size="28" />
+                    {/* <ChevronsDown size="28" /> */}
+                    <ArrowUpRight size="28" />
                   </div>
                 </ButtonAlt>
               </div>

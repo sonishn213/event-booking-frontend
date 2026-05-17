@@ -13,6 +13,7 @@ import {
   Flex,
   Dialog,
   Button,
+  Skeleton,
 } from "@radix-ui/themes";
 import {
   PublishedEventDetails,
@@ -28,8 +29,15 @@ import ButtonAlt from "@/components/ui/button-alt";
 import AttendeeNavBar from "@/components/at-navbar";
 
 const PublishedEventsPage: React.FC = () => {
-  const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } =
-    useAuth();
+  const {
+    isAuthenticated,
+    isLoading,
+    signinRedirect,
+    signoutRedirect,
+    user,
+    settings,
+  } = useAuth();
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [error, setError] = useState<string | undefined>();
@@ -39,6 +47,18 @@ const PublishedEventsPage: React.FC = () => {
   const [selectedTicketType, setSelectedTicketType] = useState<
     PublishedEventTicketTypeDetails | undefined
   >();
+
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!pageLoading) {
+      return;
+    }
+
+    setTimeout(() => {
+      setPageLoading(false);
+    }, 200);
+  }, [pageLoading]);
 
   useEffect(() => {
     if (!id) {
@@ -97,115 +117,119 @@ const PublishedEventsPage: React.FC = () => {
       <main className="container mx-auto px-4 pb-16 pt-10">
         <Grid columns="2" gap="6">
           <div>
-            <div className="rounded-lg overflow-hidden h-full">
-              <RandomEventImage />
-            </div>
+            <Skeleton loading={pageLoading}>
+              <div className="rounded-2xl overflow-hidden h-full">
+                <RandomEventImage />
+              </div>
+            </Skeleton>
           </div>
-          <Card size="3">
-            <Flex direction="column" className="h-full" justify="between">
-              <div>
-                <Heading className="text-4xl font-bold capitalize" mb="4">
-                  {publishedEvent?.name}
-                </Heading>
+          <Skeleton loading={pageLoading}>
+            <Card size="3">
+              <Flex direction="column" className="h-full" justify="between">
                 <div>
-                  <Text className="text-md flex gap-2 items-center">
-                    <MapPin size="18" />
-                    {publishedEvent?.venue}
-                  </Text>
-                  <Text className="text-md flex gap-2 items-center">
-                    <Calendar size="16" />
-                    {displayDate}
-                  </Text>
-                </div>
-              </div>
-
-              <div className="mt-10">
-                <div>
-                  <Flex justify="between" align="center">
-                    <Text as="p" weight="bold">
-                      Selected Ticket
+                  <Heading className="text-4xl font-bold capitalize" mb="4">
+                    {publishedEvent?.name}
+                  </Heading>
+                  <div>
+                    <Text className="text-md flex gap-2 items-center">
+                      <MapPin size="18" />
+                      {publishedEvent?.venue}
                     </Text>
-                    {(publishedEvent?.ticketTypes?.length || 0) > 1 && (
-                      <Dialog.Root>
-                        <Dialog.Trigger>
-                          <Text className=" text-orange-500 cursor-pointer  hover:underline decoration-dashed underline-offset-6">
-                            <Flex gap="1">
-                              <span>Change</span>
-                            </Flex>
-                          </Text>
-                        </Dialog.Trigger>
-                        <Dialog.Content maxWidth="450px">
-                          <Dialog.Title>Select Ticket</Dialog.Title>
-                          <div>
-                            <Dialog.Close>
-                              <RadioCards.Root
-                                columns="1"
-                                value={selectedTicketType?.id}
-                              >
-                                {publishedEvent?.ticketTypes?.map(
-                                  (ticketType) => (
-                                    <RadioCards.Item
-                                      value={ticketType.id}
-                                      key={ticketType.id}
-                                      onClick={() =>
-                                        setSelectedTicketType(ticketType)
-                                      }
-                                    >
-                                      <Flex direction="column" width="100%">
-                                        <Text weight="bold">
-                                          {ticketType.name}
-                                        </Text>
-                                        <p className=" text-sm">
-                                          {ticketType.description}
-                                        </p>
-                                      </Flex>
-                                      <Text className="text-lg font-bold">
-                                        {" "}
-                                        ${ticketType.price}
-                                      </Text>
-                                    </RadioCards.Item>
-                                  ),
-                                )}
-                              </RadioCards.Root>
-                            </Dialog.Close>
-                          </div>
-                          <Flex justify="end" className="mt-5">
-                            <Dialog.Close>
-                              <Button variant="soft" color="gray">
-                                Cancel
-                              </Button>
-                            </Dialog.Close>
-                          </Flex>
-                        </Dialog.Content>
-                      </Dialog.Root>
-                    )}
-                  </Flex>
+                    <Text className="text-md flex gap-2 items-center">
+                      <Calendar size="16" />
+                      {displayDate}
+                    </Text>
+                  </div>
+                </div>
 
-                  <Card className="mt-2">
-                    <Flex gap="4" align="center" justify="between">
-                      <div>
-                        <Text className="text-xl " weight="bold">
-                          {selectedTicketType?.name}
-                        </Text>
-                        <Text as="p">{selectedTicketType?.description}</Text>
-                      </div>
-                      <Text className="text-xl " weight="bold">
-                        ${selectedTicketType?.price}
+                <div className="mt-10">
+                  <div>
+                    <Flex justify="between" align="center">
+                      <Text as="p" weight="bold">
+                        Selected Ticket
                       </Text>
+                      {(publishedEvent?.ticketTypes?.length || 0) > 1 && (
+                        <Dialog.Root>
+                          <Dialog.Trigger>
+                            <Text className=" text-orange-500 cursor-pointer  hover:underline decoration-dashed underline-offset-6">
+                              <Flex gap="1">
+                                <span>Change</span>
+                              </Flex>
+                            </Text>
+                          </Dialog.Trigger>
+                          <Dialog.Content maxWidth="450px">
+                            <Dialog.Title>Select Ticket</Dialog.Title>
+                            <div>
+                              <Dialog.Close>
+                                <RadioCards.Root
+                                  columns="1"
+                                  value={selectedTicketType?.id}
+                                >
+                                  {publishedEvent?.ticketTypes?.map(
+                                    (ticketType) => (
+                                      <RadioCards.Item
+                                        value={ticketType.id}
+                                        key={ticketType.id}
+                                        onClick={() =>
+                                          setSelectedTicketType(ticketType)
+                                        }
+                                      >
+                                        <Flex direction="column" width="100%">
+                                          <Text weight="bold">
+                                            {ticketType.name}
+                                          </Text>
+                                          <p className=" text-sm">
+                                            {ticketType.description}
+                                          </p>
+                                        </Flex>
+                                        <Text className="text-lg font-bold">
+                                          {" "}
+                                          ${ticketType.price}
+                                        </Text>
+                                      </RadioCards.Item>
+                                    ),
+                                  )}
+                                </RadioCards.Root>
+                              </Dialog.Close>
+                            </div>
+                            <Flex justify="end" className="mt-5">
+                              <Dialog.Close>
+                                <Button variant="soft" color="gray">
+                                  Cancel
+                                </Button>
+                              </Dialog.Close>
+                            </Flex>
+                          </Dialog.Content>
+                        </Dialog.Root>
+                      )}
                     </Flex>
-                  </Card>
-                </div>
 
-                <div className="mt-6 w-1/2">
-                  <Link
-                    to={`/events/${publishedEvent?.id}/purchase/${selectedTicketType?.id}`}
-                  >
-                    <ButtonAlt>Purchase</ButtonAlt>
-                  </Link>
+                    <Card className="mt-2">
+                      <Flex gap="4" align="center" justify="between">
+                        <div>
+                          <Text className="text-xl " weight="bold">
+                            {selectedTicketType?.name}
+                          </Text>
+                          <Text as="p">{selectedTicketType?.description}</Text>
+                        </div>
+                        <Text className="text-xl " weight="bold">
+                          ${selectedTicketType?.price}
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </div>
+
+                  <div className="mt-6 w-1/2">
+                    <Link
+                      to={`/events/${publishedEvent?.id}/purchase/${selectedTicketType?.id}`}
+                    >
+                      <ButtonAlt>Purchase</ButtonAlt>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </Flex>
-          </Card>
+              </Flex>
+            </Card>
+          </Skeleton>
         </Grid>
       </main>
     </div>

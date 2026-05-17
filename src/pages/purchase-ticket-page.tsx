@@ -23,15 +23,13 @@ const PurchaseTicketPage: React.FC = () => {
       return;
     }
     const timer = setTimeout(() => {
-      navigate("/");
-    }, 3000);
+      navigate("/dashboard/tickets");
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [isPurchaseSuccess]);
 
   const handlePurchase = async () => {
-    // setIsPurchaseASuccess(true);
-    // return;
     if (isLoading || !user?.access_token || !eventId || !ticketTypeId) {
       return;
     }
@@ -49,22 +47,8 @@ const PurchaseTicketPage: React.FC = () => {
         name: "Eventz",
         description: "Event ticket purchase",
         order_id: paymentResponse.id,
-        handler: async function (response: RazorpaySuccessResponse) {
-          const isSuccess = await purchaseVerifyTicket(
-            user.access_token,
-            eventId,
-            ticketTypeId,
-            {
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              signature: response.razorpay_signature,
-            } as RazorpayVerifyRequest,
-          );
-
-          console.log("isSuccess");
-          console.log(isSuccess);
-
-          setIsPurchaseASuccess(true);
+        handler: function (response: RazorpaySuccessResponse) {
+          purchaseCallback(response);
         },
         prefill: {
           name: "User Name",
@@ -77,8 +61,37 @@ const PurchaseTicketPage: React.FC = () => {
 
       const rzp1 = new Razorpay(options);
       rzp1.open();
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === "string") {
+        setError(err);
+      } else {
+        setError("An unknown error occurred");
+      }
+    }
+  };
 
-      console.log(paymentResponse);
+  const purchaseCallback = async (response: RazorpaySuccessResponse) => {
+    if (isLoading || !user?.access_token || !eventId || !ticketTypeId) {
+      return;
+    }
+    try {
+      const isSuccess = await purchaseVerifyTicket(
+        user.access_token,
+        eventId,
+        ticketTypeId,
+        {
+          paymentId: response.razorpay_payment_id,
+          orderId: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+        } as RazorpayVerifyRequest,
+      );
+      // navigate("/");
+
+      if (isSuccess) {
+        setIsPurchaseASuccess(true);
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -102,7 +115,7 @@ const PurchaseTicketPage: React.FC = () => {
                 Your ticket purchase was successful.
               </p>
               <p className="text-gray-600 text-sm">
-                Redirecting to home page in a few seconds...
+                Redirecting to tickets in a few seconds...
               </p>
             </div>
           </div>

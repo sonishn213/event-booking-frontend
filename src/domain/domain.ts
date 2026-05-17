@@ -234,3 +234,12 @@ export interface RazorpayVerifyRequest {
   orderId: string
   signature: string
 }
+
+export interface BecomeOrganizerRequest {
+  companyName: string;
+  displayName: string;
+  companyEmail: string;
+  companyPhone: string;
+  gstNumber: string;
+  address: string;
+}

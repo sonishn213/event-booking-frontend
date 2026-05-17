@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
-import { jwtDecode } from "jwt-decode";
+import UserRole from "@/domain/enums/UserRoles";
 
 interface UseRolesReturn {
   isLoading: boolean;
@@ -8,12 +8,6 @@ interface UseRolesReturn {
   isOrganizer: boolean;
   isAttendee: boolean;
   isStaff: boolean;
-}
-
-interface JwtPayload {
-  realm_access?: {
-    roles?: string[];
-  };
 }
 
 export const useRoles = (): UseRolesReturn => {
@@ -37,13 +31,14 @@ export const useRoles = (): UseRolesReturn => {
     }
 
     try {
-      const payload = jwtDecode<JwtPayload>(user?.access_token);
-      const allRoles = payload.realm_access?.roles || [];
-      const filteredRoles = allRoles.filter((role) => role.startsWith("ROLE_"));
+      // const payload = jwtDecode<JwtPayload>(user?.access_token);
+      const allRoles = user?.profile?.realm_access?.roles || [];
+      // const allRoles = payload.realm_access?.roles || [];
+      const filteredRoles = allRoles.filter((role) => role.startsWith("role_"));
       setRoles(filteredRoles);
-      setIsOrganizer(filteredRoles.includes("ROLE_ORGANIZER"));
-      setIsAttendee(filteredRoles.includes("ROLE_ATTENDEE"));
-      setIsStaff(filteredRoles.includes("ROLE_STAFF"));
+      setIsOrganizer(allRoles.includes(UserRole.ORGANIZER));
+      setIsStaff(allRoles.includes(UserRole.STAFF));
+      setIsAttendee(allRoles.includes(UserRole.ATTENDEE));
     } catch (error) {
       console.error("Error parsing JWT: " + error);
       setRoles([]);

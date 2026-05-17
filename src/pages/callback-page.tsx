@@ -1,9 +1,12 @@
+import UserHomeUrl from "@/domain/enums/UserHomeUrl";
+import UserRole from "@/domain/enums/UserRoles";
 import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
 
 const CallbackPage: React.FC = () => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated, user } = useAuth();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,11 +16,21 @@ const CallbackPage: React.FC = () => {
 
     if (isAuthenticated) {
       const redirectPath = localStorage.getItem("redirectPath");
+      const userRoles = user?.profile?.realm_access?.roles;
       if (redirectPath) {
         localStorage.removeItem("redirectPath");
         navigate(redirectPath);
-      }else{
-        navigate("/organizers");
+        return;
+      }
+
+      if (userRoles?.includes(UserRole.ORGANIZER)) {
+        navigate(UserHomeUrl.ORGANIZER);
+        return;
+      }
+
+      if (userRoles?.includes(UserRole.ATTENDEE)) {
+        navigate(UserHomeUrl.ATTENDEE);
+        return;
       }
     }
   }, [isLoading, isAuthenticated, navigate]);

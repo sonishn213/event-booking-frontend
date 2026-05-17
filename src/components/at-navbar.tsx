@@ -15,25 +15,31 @@ import {
 import {
   ArrowDown,
   Bell,
+  BookKey,
   ChevronDown,
   FerrisWheel,
   LogOut,
+  SquareArrowOutUpRight,
   Ticket,
 } from "lucide-react";
 import { Link } from "react-router";
 import { useAuth } from "react-oidc-context";
+import { useRoles } from "@/hooks/use-roles";
 
 const LogoSide: React.FC = () => {
   return (
-    <Flex gap="2" align="center">
-      <FerrisWheel />
-      <Heading>Eventz</Heading>
-    </Flex>
+    <Link to="/">
+      <Flex gap="2" align="center">
+        <FerrisWheel />
+        <Heading>Eventz</Heading>
+      </Flex>
+    </Link>
   );
 };
 
 const Profile: React.FC = () => {
   const { signoutRedirect, user } = useAuth();
+  const { isOrganizer } = useRoles();
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -65,7 +71,18 @@ const Profile: React.FC = () => {
           </Flex>
         </Link>
 
-        <Separator size="4" my="2" />
+        {isOrganizer && (
+          <Link to="/dashboard">
+            <Flex
+              gap="3"
+              align="center"
+              className="hover:bg-gray-100 cursor-pointer px-2 py-1 rounded-md"
+            >
+              <BookKey size="16" />
+              <Text size="3">Dashboard</Text>
+            </Flex>
+          </Link>
+        )}
 
         <Flex
           gap="3"
@@ -78,6 +95,24 @@ const Profile: React.FC = () => {
             Log out
           </Text>
         </Flex>
+
+        {!isOrganizer && (
+          <>
+            <Separator size="4" my="2" />
+            <Link to="/become-organizer">
+              <div className="mt-4 cursor-pointer">
+                <div className="bg-gradient-to-r from-[#084887]  to-[#084887]/70 rounded-md px-2 py-1">
+                  <h5 className="text-md font-bold text-white flex items-center gap-2 mb-2">
+                    Become a Organizer <SquareArrowOutUpRight size="16" />
+                  </h5>
+                  <p className="text-sm text-white">
+                    Unlock the feature to host events and sell tickets
+                  </p>
+                </div>
+              </div>
+            </Link>
+          </>
+        )}
       </Popover.Content>
     </Popover.Root>
   );
@@ -96,8 +131,8 @@ const AttendeeNavBar: React.FC = () => {
             <Flex gap="6" className="uppercase" align="center">
               <Link to="/">Home</Link>
               <Link to="/events">Events</Link>
-              <Link to="/events">About us</Link>
-              <Link to="/events">Contact</Link>
+              <Link to="/about">About us</Link>
+              <Link to="/contact">Contact</Link>
             </Flex>
             <div>
               {isAuthenticated ? (

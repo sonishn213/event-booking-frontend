@@ -22,6 +22,9 @@ import ComingSoon from "@/pages/coming-soon.tsx";
 import UserRole from "@/domain/enums/UserRoles.ts";
 import OrganizerLandingPage from "@/pages/organizer-landing-page.tsx";
 import BecomeOrganizerSuccessPage from "@/pages/become-organizer-success-page.tsx";
+import StaffInvitation from "@/pages/staff-invitation.tsx";
+import DashboardListStaffPage from "@/pages/dashboard-list-staff-page.tsx";
+import StaffInviteAcceptSuccess from "@/pages/staff-invite-accept-success.tsx";
 
 const router = createBrowserRouter([
   {
@@ -161,6 +164,30 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <DashboardManageEventPageOLD />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "dashboard/staffs",
+    element: (
+      <ProtectedRoute>
+        <DashboardListStaffPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/invitation/:invitationId",
+    element: (
+      <ProtectedRoute>
+        <StaffInvitation />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/invitation/success/:passcode",
+    element: (
+      <ProtectedRoute>
+        <StaffInviteAcceptSuccess />
       </ProtectedRoute>
     ),
   },

@@ -399,3 +399,53 @@ export const becomeOrganizer = async (
     }
   }
 };
+
+export const inviteStaff = async (
+  accessToken: string,
+  email: string,
+): Promise<void> => {
+  const response = await fetch("/api/v1/staffs/invite/" + email, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    }
+  });
+
+
+  if (!response.ok) {
+    const responseBody = await response.json();
+
+    if (isErrorResponse(responseBody)) {
+      throw new Error(responseBody.error);
+    } else {
+      console.error(JSON.stringify(responseBody));
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
+export const inviteAcceptStaff = async (
+  accessToken: string,
+  invitationId: string,
+): Promise<void> => {
+  const response = await fetch("/api/v1/staffs-invitation/accept/" + invitationId, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    }
+  });
+
+
+  if (!response.ok) {
+    const responseBody = await response.json();
+
+    if (isErrorResponse(responseBody)) {
+      throw new Error(responseBody.error);
+    } else {
+      console.error(JSON.stringify(responseBody));
+      throw new Error("An unknown error occurred");
+    }
+  }
+};

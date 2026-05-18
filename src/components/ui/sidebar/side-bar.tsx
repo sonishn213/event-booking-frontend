@@ -26,7 +26,7 @@ const SideBar: React.FC = () => {
               <SideBarItem.Label>Events</SideBarItem.Label>
             </SideBarItem>
           </Link>
-          <Link to="/dashboard/staff">
+          <Link to="/dashboard/staffs">
             <SideBarItem>
               <SideBarItem.Icon>
                 {/* <IdCardLanyard size={18} strokeWidth={1.5} /> */}

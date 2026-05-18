@@ -1,6 +1,16 @@
 import { SimplePagination } from "@/components/simple-pagination";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {Box,Flex,Button, Heading,Table,Badge,DropdownMenu,IconButton,AlertDialog} from "@radix-ui/themes";
+import {
+  Box,
+  Flex,
+  Button,
+  Heading,
+  Table,
+  Badge,
+  DropdownMenu,
+  IconButton,
+  AlertDialog,
+} from "@radix-ui/themes";
 
 import {
   EventSummary,
@@ -8,8 +18,18 @@ import {
   PaginationResponse,
 } from "@/domain/domain";
 import { deleteEvent, listEvents } from "@/lib/api";
-import {  AlertCircle,  Calendar,  Clock,  Edit,  MapPin,  Tag,  Trash,  Plus, Ellipsis, CopyPlus} 
-from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  Clock,
+  Edit,
+  MapPin,
+  Tag,
+  Trash,
+  Plus,
+  Ellipsis,
+  CopyPlus,
+} from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
@@ -138,129 +158,127 @@ const DashboardListEventsPage: React.FC = () => {
   return (
     <AdminLayout>
       <AdminLayout.Body>
-          <Box mb="6">
-            <Flex justify="between">
-              <Heading>
-                 Your Events
-              </Heading>
-              <Link to="/dashboard/events/create" >
-                <Button variant="soft">
-                  <Plus />  Add New
-                </Button>
-              </Link>
-            </Flex>
-          </Box>
-          <Table.Root variant="surface">
-            <Table.Header>
+        <Box mb="6">
+          <Flex justify="between">
+            <Heading>Your Events</Heading>
+            <Link to="/dashboard/events/create">
+              <Button variant="soft">
+                <Plus /> Add New
+              </Button>
+            </Link>
+          </Flex>
+        </Box>
+        <Table.Root variant="surface">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Schedule</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Sales Period</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Venue</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell align="center">
+                Action
+              </Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+
+          <Table.Body>
+            {events?.content.map((eventItem) => (
               <Table.Row>
-                <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Schedule</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Sales Period</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Venue</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell align="center">Action</Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {events?.content.map((eventItem) => (
-                <Table.Row>
-                  <Table.RowHeaderCell>
-                      <div className="max-w-xs text-wrap">
-                        {eventItem.name}
-                      </div>
-                  </Table.RowHeaderCell>
-                  <Table.Cell>
-                    <div className="flex space-x-2">
-                  <div>
-                    <p className="font-medium">
-                      {formatDate(eventItem.start)} to{" "}
-                      {formatDate(eventItem.end)}
-                    </p>
-                    <p className="text-gray-400">
-                      {formatTime(eventItem.start)} -{" "}
-                      {formatTime(eventItem.end)}
-                    </p>
+                <Table.RowHeaderCell>
+                  <div className="max-w-xs text-wrap">{eventItem.name}</div>
+                </Table.RowHeaderCell>
+                <Table.Cell>
+                  <div className="flex space-x-2">
+                    <div>
+                      <p className="font-medium">
+                        {formatDate(eventItem.start)} to{" "}
+                        {formatDate(eventItem.end)}
+                      </p>
+                      <p className="text-gray-400">
+                        {formatTime(eventItem.start)} -{" "}
+                        {formatTime(eventItem.end)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {formatDate(eventItem.salesStart)} to{" "}
-                    {formatDate(eventItem.salesEnd)}
-                  </Table.Cell>
-                  <Table.Cell>{eventItem.venue}</Table.Cell>
-                  <Table.Cell>
-                      <Badge color={getStatusColor(eventItem.status)}>
-                        {eventItem.status}
-                      </Badge>
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                      <DropdownMenu.Root>
-                        <DropdownMenu.Trigger>
-                          <IconButton  variant="ghost" color="gray">
-                            <Ellipsis size="16"/>
-                          </IconButton>
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content variant="soft">
-                            <Link to={`/dashboard/events/update/${eventItem.id}`}>
-                          <DropdownMenu.Item color="gray">
-                              <Edit size="14"/>Edit
-                          </DropdownMenu.Item>
-                            </Link>
-                          <DropdownMenu.Item  color="gray">
-                            <CopyPlus size="14"/>Duplicate
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Separator />
-                          <DropdownMenu.Item  
-                            color="red" 
-                            onClick={() => handleOpenDeleteEventDialog(eventItem)}
-                          >
-                            <Trash size="14"/>Delete
-                          </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Root>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
+                </Table.Cell>
+                <Table.Cell>
+                  {formatDate(eventItem.salesStart)} to{" "}
+                  {formatDate(eventItem.salesEnd)}
+                </Table.Cell>
+                <Table.Cell>{eventItem.venue}</Table.Cell>
+                <Table.Cell>
+                  <Badge color={getStatusColor(eventItem.status)}>
+                    {eventItem.status}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell align="center">
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                      <IconButton variant="ghost" color="gray">
+                        <Ellipsis size="16" />
+                      </IconButton>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content variant="soft">
+                      <Link to={`/dashboard/events/update/${eventItem.id}`}>
+                        <DropdownMenu.Item color="gray">
+                          <Edit size="14" />
+                          Edit
+                        </DropdownMenu.Item>
+                      </Link>
+                      <DropdownMenu.Item color="gray">
+                        <CopyPlus size="14" />
+                        Duplicate
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Separator />
+                      <DropdownMenu.Item
+                        color="red"
+                        onClick={() => handleOpenDeleteEventDialog(eventItem)}
+                      >
+                        <Trash size="14" />
+                        Delete
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
 
-          <div className="flex justify-center py-8">
-            {events && (
-              <SimplePagination pagination={events.page} onPageChange={setPage} />
-            )}
-          </div>
-          <AlertDialog.Root open={dialogOpen}>
-        <AlertDialog.Content>
+        <div className="flex justify-center py-8">
+          {events && (
+            <SimplePagination pagination={events.page} onPageChange={setPage} />
+          )}
+        </div>
+        <AlertDialog.Root open={dialogOpen}>
+          <AlertDialog.Content>
             <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
             <AlertDialog.Description>
               This will delete your event '{eventToDelete?.name}' and cannot be
               undone.
             </AlertDialog.Description>
-          {deleteEventError && (
-            <Alert variant="destructive" className="border-red-700">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{deleteEventError}</AlertDescription>
-            </Alert>
-          )} 
-          <Flex gap="3" mt="4" justify="end">
-            <AlertDialog.Cancel onClick={handleCancelDeleteEventDialog}>
-              <Button variant="soft" color="gray">
-                Cancel
-              </Button>
-            </AlertDialog.Cancel>
-            <AlertDialog.Action onClick={() => handleDeleteEvent()}>
-               <Button color="red">
-                  Continue
-               </Button>
-            </AlertDialog.Action>
-          </Flex>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+            {deleteEventError && (
+              <Alert variant="destructive" className="border-red-700">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{deleteEventError}</AlertDescription>
+              </Alert>
+            )}
+            <Flex gap="3" mt="4" justify="end">
+              <AlertDialog.Cancel onClick={handleCancelDeleteEventDialog}>
+                <Button variant="soft" color="gray">
+                  Cancel
+                </Button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action onClick={() => handleDeleteEvent()}>
+                <Button color="red">Continue</Button>
+              </AlertDialog.Action>
+            </Flex>
+          </AlertDialog.Content>
+        </AlertDialog.Root>
       </AdminLayout.Body>
     </AdminLayout>
-    
   );
 };
 

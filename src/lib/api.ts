@@ -15,7 +15,8 @@ import {
   PaymentResponse,
   RazorpaySuccessResponse,
   RazorpayVerifyRequest,
-  BecomeOrganizerRequest
+  BecomeOrganizerRequest,
+  StaffsOrganizersResponse
 } from "@/domain/domain";
 
 export const createEvent = async (
@@ -448,4 +449,30 @@ export const inviteAcceptStaff = async (
       throw new Error("An unknown error occurred");
     }
   }
+};
+
+export const listStaffsOrganizers = async (
+  accessToken: string,
+  page: number,
+): Promise<PaginationResponse<StaffsOrganizersResponse>> => {
+  const response = await fetch(`/api/v1/staff/organizers?page=${page}&size=10`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const responseBody = await response.json();
+
+  if (!response.ok) {
+    if (isErrorResponse(responseBody)) {
+      throw new Error(responseBody.error);
+    } else {
+      console.error(JSON.stringify(responseBody));
+      throw new Error("An unknown error occurred");
+    }
+  }
+
+  return responseBody as PaginationResponse<StaffsOrganizersResponse>;
 };

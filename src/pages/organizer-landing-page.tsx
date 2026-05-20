@@ -11,20 +11,20 @@ const OrganizerLandingPage: React.FC = () => {
   return (
     <div className="min-h-screen">
       <section className="bg-[url(/organizers-landing-hero-blur.png)] bg-cover min-h-[200px]  bg-bottom md:min-h-[250px] ">
-        <div className=" bg-gradient-to-r from-[#084887]  to-[#084887]/50 min-h-[200px] md:min-h-[500px]  text-white">
+        <div className=" bg-gradient-to-r from-[#084887]  to-[#084887]/50 min-h-[200px] md:min-h-[500px]  text-white ">
           <div className="container  mx-auto">
             <AttendeeNavBar />
           </div>
-          <div className="container  mx-auto  pt-14">
+          <div className="container  mx-auto  pt-14 px-4 pb-6">
             <h1
-              className="text-8xl font-black
+              className="text-5xl lg:text-8xl font-black
            mb-12 text-left tracking-tighter font-user"
             >
               HOST
               <br /> EVENTS
             </h1>
 
-            <Flex gap="4">
+            <Flex gap="4" direction={{ initial: "column-reverse", md: "row" }}>
               <div className="md:w-1/2">
                 <Text size="4">
                   Plan your perfect event with a streamlined booking experience
@@ -38,7 +38,7 @@ const OrganizerLandingPage: React.FC = () => {
                 {isOrganizer ? (
                   <div>
                     <Link to="/dashboard">
-                      <div>
+                      <div className="w-59">
                         <ButtonAlt>
                           START
                           <div className="bg-orange-300 group-hover/buttonhero:bg-orange-200 text-orange-600 rounded-full p-2 -mr-0.5 ml-2 transition duration-500 select-none">
@@ -50,7 +50,7 @@ const OrganizerLandingPage: React.FC = () => {
                   </div>
                 ) : (
                   <OrganizerFormDialog>
-                    <div>
+                    <div className="w-59">
                       <ButtonAlt>
                         START
                         <div className="bg-orange-300 group-hover/buttonhero:bg-orange-200 text-orange-600 rounded-full p-2 -mr-0.5 ml-2 transition duration-500 select-none">

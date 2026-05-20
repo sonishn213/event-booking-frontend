@@ -15,7 +15,7 @@ const DashboardPage: React.FC = () => {
   }
 
   if (isStaff) {
-    navigate("/dashboard/validate-qr");
+    navigate("/dashboard/staff/organizers");
     return;
   }
 

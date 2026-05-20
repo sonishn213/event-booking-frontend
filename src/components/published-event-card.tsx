@@ -27,11 +27,11 @@ const PublishedEventCard: React.FC<PublishedEventCardProperties> = ({
           <RandomEventImage />
         </div>
         <div>
-          <h3 className="text-2xl font-bold  mb-6 capitalize">
+          <h3 className="text-lg lg:text-2xl font-bold  mb-6 capitalize">
             {publishedEvent.name}
           </h3>
 
-          <div className="text-gray-700 capitalize">
+          <div className="text-gray-700 capitalize ">
             <Flex gap="2" align="center" mb="2" className="">
               <MapPin size="16" /> {publishedEvent.venue}
             </Flex>
@@ -41,14 +41,6 @@ const PublishedEventCard: React.FC<PublishedEventCardProperties> = ({
                 {displayDate}
               </Flex>
             </div>
-            {/* <div className="flex justify-between p-2 border-t text-gray-500">
-            <button className="cursor-pointer">
-              <Heart />
-            </button>
-            <button className="cursor-pointer">
-              <Share2 />
-            </button>
-          </div> */}
           </div>
         </div>
       </Card>

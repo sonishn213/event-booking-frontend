@@ -243,3 +243,9 @@ export interface BecomeOrganizerRequest {
   gstNumber: string;
   address: string;
 }
+
+export interface StaffsOrganizersResponse {
+  id: string;
+  companyName: string;
+  displayName: string;
+}

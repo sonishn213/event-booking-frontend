@@ -29,8 +29,6 @@ const StaffInvitation: React.FC = () => {
       localStorage.setItem(key, passcode);
       await signinRedirect({ redirect_uri: redirectUrl });
 
-      //design successpage
-      // from there give button to goto dashboard
     } catch (err) {
       setSubmitLoading(false);
       if (err instanceof Error) {

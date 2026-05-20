@@ -46,7 +46,7 @@ const PublishedListEventsPage: React.FC = () => {
     }
 
     try {
-      setPublishedEvents(await searchPublishedEvents(query, page));
+      setPublishedEvents(await searchPublishedEvents(query || "", page));
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -77,21 +77,21 @@ const PublishedListEventsPage: React.FC = () => {
       </div>
 
       <section className="">
-        <div className="container mx-auto  pt-4">
+        <div className="container mx-auto  pt-4 px-4">
           <Heading
-            size="8"
+            size={{ initial: "4", lg: "8" }}
             weight="bold"
             className="font-user text-zinc-800 uppercase"
           >
             Browse <span className="text-orange-500"> Events</span>
           </Heading>
           <Box mt="3">
-            <Text color="gray">
+            <Text color="gray" size={{ initial: "1", lg: "4" }}>
               <Link to="/">HOME</Link> / Events
             </Text>
           </Box>
           {/* Published Event Cards */}
-          <div className="grid grid-cols-2 gap-4  md:grid-cols-3 mt-8">
+          <div className="grid grid-cols-1 gap-4  md:grid-cols-3 mt-8">
             {publishedEvents?.content?.map((publishedEvent) => (
               <PublishedEventCard
                 publishedEvent={publishedEvent}

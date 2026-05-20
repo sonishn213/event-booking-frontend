@@ -25,6 +25,7 @@ import BecomeOrganizerSuccessPage from "@/pages/become-organizer-success-page.ts
 import StaffInvitation from "@/pages/staff-invitation.tsx";
 import DashboardListStaffPage from "@/pages/dashboard-list-staff-page.tsx";
 import StaffInviteAcceptSuccess from "@/pages/staff-invite-accept-success.tsx";
+import StaffDashBoard from "@/pages/staff-dashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -136,10 +137,18 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/dashboard/validate-qr",
+    path: "/dashboard/staff/validate-qr",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute role={UserRole.STAFF}>
         <DashboardValidateQrPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/dashboard/staff/organizers",
+    element: (
+      <ProtectedRoute role={UserRole.STAFF}>
+        <StaffDashBoard />
       </ProtectedRoute>
     ),
   },

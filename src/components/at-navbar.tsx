@@ -11,6 +11,7 @@ import {
   Avatar,
   Popover,
   Button,
+  Dialog,
 } from "@radix-ui/themes";
 import {
   ArrowDown,
@@ -19,8 +20,10 @@ import {
   ChevronDown,
   FerrisWheel,
   LogOut,
+  Menu,
   SquareArrowOutUpRight,
   Ticket,
+  TicketCheck,
 } from "lucide-react";
 import { Link } from "react-router";
 import { useAuth } from "react-oidc-context";
@@ -39,7 +42,7 @@ const LogoSide: React.FC = () => {
 
 const Profile: React.FC = () => {
   const { signoutRedirect, user } = useAuth();
-  const { isOrganizer } = useRoles();
+  const { isOrganizer, isStaff } = useRoles();
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -50,7 +53,10 @@ const Profile: React.FC = () => {
               user?.profile?.preferred_username?.slice(0, 2).toUpperCase() ||
               "A"
             }
-            className="border-1 border-orange-200"
+            color={isOrganizer ? "indigo" : "orange"}
+            className={`border ${
+              isOrganizer ? "border-indigo-200" : "border-orange-200"
+            }`}
           />
           <ChevronDown size="14" />
         </Flex>
@@ -71,6 +77,18 @@ const Profile: React.FC = () => {
           </Flex>
         </Link>
 
+        {isStaff && (
+          <Link to="/dashboard/staff/organizers">
+            <Flex
+              gap="3"
+              align="center"
+              className="hover:bg-gray-100 cursor-pointer px-2 py-1 rounded-md"
+            >
+              <TicketCheck size="16" />
+              <Text size="3">Validate ticket</Text>
+            </Flex>
+          </Link>
+        )}
         {isOrganizer && (
           <Link to="/dashboard">
             <Flex
@@ -103,7 +121,7 @@ const Profile: React.FC = () => {
               <div className="mt-4 cursor-pointer">
                 <div className="bg-gradient-to-r from-[#084887]  to-[#084887]/70 rounded-md px-2 py-1">
                   <h5 className="text-md font-bold text-white flex items-center gap-2 mb-2">
-                    Become a Organizer <SquareArrowOutUpRight size="16" />
+                    Become an Organizer <SquareArrowOutUpRight size="16" />
                   </h5>
                   <p className="text-sm text-white">
                     Unlock the feature to host events and sell tickets
@@ -119,35 +137,62 @@ const Profile: React.FC = () => {
 };
 
 const AttendeeNavBar: React.FC = () => {
-  const { isAuthenticated, isLoading, signinRedirect } = useAuth();
+  const { isAuthenticated, signinRedirect } = useAuth();
 
   return (
     <div>
-      <Box pt="3" pb="3">
+      <Box pt="3" pb="3" px="2">
         <Flex gap="2" justify="between" align="center">
           <LogoSide />
 
-          <Flex gap="9">
-            <Flex gap="6" className="uppercase" align="center">
-              <Link to="/">Home</Link>
-              <Link to="/events">Events</Link>
-              <Link to="/about">About us</Link>
-              <Link to="/contact">Contact</Link>
-            </Flex>
-            <div>
-              {isAuthenticated ? (
-                <Profile />
-              ) : (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => signinRedirect()}
-                >
-                  <div className="font-user border-2 border-orange-400 py-2 px-6 rounded-full tracking-wider  hover:bg-orange-400">
-                    Log In
-                  </div>
-                </div>
-              )}
+          <Flex gap="9" align="center">
+            <div className="hidden lg:block">
+              <Flex gap="6" className="uppercase" align="center">
+                <Link to="/">Home</Link>
+                <Link to="/events">Events</Link>
+                <Link to="/about">About us</Link>
+                <Link to="/contact">Contact</Link>
+              </Flex>
             </div>
+            <Flex align="center" gap="2">
+              <div>
+                {isAuthenticated ? (
+                  <Profile />
+                ) : (
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => signinRedirect()}
+                  >
+                    <div className="font-user border-2 border-orange-500 py-2 px-6 rounded-full tracking-wider  hover:bg-orange-400">
+                      Log In
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="lg:hidden">
+                <Dialog.Root>
+                  <Dialog.Trigger>
+                    <Menu />
+                  </Dialog.Trigger>
+                  <Dialog.Content>
+                    <div className="text-center">
+                      <div className="pb-2">
+                        <Link to="/">Home</Link>
+                      </div>
+                      <div className="py-2">
+                        <Link to="/events">Events</Link>
+                      </div>
+                      <div className="py-2">
+                        <Link to="/about">About us</Link>
+                      </div>
+                      <div className="pt-2">
+                        <Link to="/contact">Contact</Link>
+                      </div>
+                    </div>
+                  </Dialog.Content>
+                </Dialog.Root>
+              </div>
+            </Flex>
           </Flex>
         </Flex>
       </Box>
